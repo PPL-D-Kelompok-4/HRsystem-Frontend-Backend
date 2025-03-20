@@ -7,9 +7,6 @@ A backend system for HR and Attendance management built with Express.js and MySQ
 - Employee management
 - Department management
 - Position management
-- Attendance tracking
-- Leave management
-- Payroll management
 - Authentication and authorization
 
 ## Prerequisites
@@ -20,17 +17,20 @@ A backend system for HR and Attendance management built with Express.js and MySQ
 ## Installation
 
 1. Clone the repository:
+
    ```
    git clone <repository-url>
    cd hr-attendance-system
    ```
 
 2. Install dependencies:
+
    ```
    npm install
    ```
 
 3. Create a `.env` file in the root directory (use `.env.example` as a template):
+
    ```
    cp .env.example .env
    ```
@@ -38,14 +38,17 @@ A backend system for HR and Attendance management built with Express.js and MySQ
 4. Update the `.env` file with your configuration.
 
 5. Create the database and tables:
+
    - Run the SQL script in `database/migrations/init.sql` in your MySQL server.
 
 6. Start the server:
+
    ```
    npm start
    ```
 
    For development with auto-reload:
+
    ```
    npm run dev
    ```
@@ -82,35 +85,6 @@ A backend system for HR and Attendance management built with Express.js and MySQ
 - PUT /api/positions/:id - Update position
 - DELETE /api/positions/:id - Delete position
 
-### Payrolls
-
-- GET /api/payrolls - Get all payrolls
-- GET /api/payrolls/:id - Get payroll by ID
-- GET /api/payrolls/employee/:employeeId - Get payrolls by employee ID
-- POST /api/payrolls - Create new payroll
-- PUT /api/payrolls/:id - Update payroll
-- DELETE /api/payrolls/:id - Delete payroll
-
-### Leaves
-
-- GET /api/leaves - Get all leaves
-- GET /api/leaves/:id - Get leave by ID
-- GET /api/leaves/employee/:employeeId - Get leaves by employee ID
-- POST /api/leaves - Create new leave
-- PUT /api/leaves/:id/status - Update leave status
-- DELETE /api/leaves/:id - Delete leave
-
-### Attendances
-
-- GET /api/attendances - Get all attendances
-- GET /api/attendances/:id - Get attendance by ID
-- GET /api/attendances/employee/:employeeId - Get attendances by employee ID
-- GET /api/attendances/date-range - Get attendances by date range
-- POST /api/attendances/clock-in - Clock in
-- POST /api/attendances/clock-out - Clock out
-- POST /api/attendances - Create or update attendance manually
-- DELETE /api/attendances/:id - Delete attendance
-
 ## Project Structure
 
 ```
@@ -124,30 +98,21 @@ hr-attendance-system/
 │   │   ├── config.js
 │   │   └── database.js
 │   ├── controllers/
-│   │   ├── attendanceController.js
 │   │   ├── authController.js
 │   │   ├── departmentController.js
 │   │   ├── employeeController.js
-│   │   ├── leaveController.js
-│   │   ├── payrollController.js
 │   │   └── positionController.js
 │   ├── middlewares/
 │   │   ├── authMiddleware.js
 │   │   └── validationMiddleware.js
 │   ├── models/
-│   │   ├── attendanceModel.js
 │   │   ├── departmentModel.js
 │   │   ├── employeeModel.js
-│   │   ├── leaveModel.js
-│   │   ├── payrollModel.js
 │   │   └── positionModel.js
 │   ├── routes/
-│   │   ├── attendanceRoutes.js
 │   │   ├── authRoutes.js
 │   │   ├── departmentRoutes.js
 │   │   ├── employeeRoutes.js
-│   │   ├── leaveRoutes.js
-│   │   ├── payrollRoutes.js
 │   │   └── positionRoutes.js
 │   ├── utils/
 │   │   ├── helpers.js
