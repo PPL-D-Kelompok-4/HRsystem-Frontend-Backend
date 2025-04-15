@@ -12,6 +12,7 @@ import departmentRoutes from "./routes/departmentRoutes.js";
 import employeeRoutes from "./routes/employeeRoutes.js";
 import positionRoutes from "./routes/positionRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import attendanceRoutes from "./routes/attendanceRoutes.js";
 
 // Create Express app
 const app = express();
@@ -33,6 +34,7 @@ if (process.env.NODE_ENV !== "production") {
 app.use("/api/departments", departmentRoutes);
 app.use("/api/employees", employeeRoutes);
 app.use("/api/positions", positionRoutes);
+app.use("/api/attendances", attendanceRoutes);
 app.use("/api/auth", authRoutes);
 
 // Root route

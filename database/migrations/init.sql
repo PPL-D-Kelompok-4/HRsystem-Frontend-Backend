@@ -1,5 +1,5 @@
 -- Create database
-CREATE DATABASE IF NOT EXISTS hrsystem-db;
+CREATE DATABASE IF NOT EXISTS `hrsystem-api-db`;
 USE `hrsystem-api-db`;
 
 -- Create Departemen table
@@ -32,6 +32,18 @@ CREATE TABLE IF NOT EXISTS Karyawan (
   PRIMARY KEY (employeeID),
   FOREIGN KEY (positionID) REFERENCES Jabatan(PositionID),
   FOREIGN KEY (departmentID) REFERENCES Departemen(departmentID)
+);
+
+-- Create Kehadiran table
+CREATE TABLE IF NOT EXISTS Kehadiran (
+  attendanceID INT(11) NOT NULL AUTO_INCREMENT,
+  employeeID INT(11) NOT NULL,
+  tanggal DATE NOT NULL,
+  jam_Masuk TIME,
+  jam_Keluar TIME,
+  status ENUM('Hadir', 'Izin', 'Sakit', 'Cuti') NOT NULL,
+  PRIMARY KEY (attendanceID),
+  FOREIGN KEY (employeeID) REFERENCES Karyawan(employeeID)
 );
 
 -- Insert sample data for Departemen

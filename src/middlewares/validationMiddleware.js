@@ -144,6 +144,55 @@ export const employeeValidationRules = {
 	],
 };
 
+// Attendance validation rules
+export const attendanceValidationRules = {
+	clockIn: [
+		body("employeeID")
+			.notEmpty()
+			.withMessage("Employee ID is required")
+			.isInt()
+			.withMessage("Employee ID must be an integer"),
+	],
+	clockOut: [
+		body("employeeID")
+			.notEmpty()
+			.withMessage("Employee ID is required")
+			.isInt()
+			.withMessage("Employee ID must be an integer"),
+	],
+	createOrUpdate: [
+		body("employeeID")
+			.notEmpty()
+			.withMessage("Employee ID is required")
+			.isInt()
+			.withMessage("Employee ID must be an integer"),
+		body("tanggal")
+			.notEmpty()
+			.withMessage("Date is required")
+			.isDate()
+			.withMessage("Date must be a valid date"),
+		body("jam_Masuk").optional(),
+		body("jam_Keluar").optional(),
+		body("status")
+			.notEmpty()
+			.withMessage("Status is required")
+			.isIn(["Hadir", "Izin", "Sakit", "Cuti"])
+			.withMessage("Status must be either Hadir, Izin, Sakit, or Cuti"),
+	],
+	getByDateRange: [
+		query("startDate")
+			.notEmpty()
+			.withMessage("Start date is required")
+			.isDate()
+			.withMessage("Start date must be a valid date"),
+		query("endDate")
+			.notEmpty()
+			.withMessage("End date is required")
+			.isDate()
+			.withMessage("End date must be a valid date"),
+	],
+};
+
 // Authentication validation rules
 export const authValidationRules = {
 	login: [

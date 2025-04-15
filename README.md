@@ -7,6 +7,7 @@ A backend system for HR and Attendance management built with Express.js and MySQ
 - Employee management
 - Department management
 - Position management
+- Attendance tracking
 - Authentication and authorization
 
 ## Prerequisites
@@ -85,6 +86,17 @@ A backend system for HR and Attendance management built with Express.js and MySQ
 - PUT /api/positions/:id - Update position
 - DELETE /api/positions/:id - Delete position
 
+### Attendances
+
+- GET /api/attendances - Get all attendances
+- GET /api/attendances/:id - Get attendance by ID
+- GET /api/attendances/employee/:employeeId - Get attendances by employee ID
+- GET /api/attendances/date-range - Get attendances by date range
+- POST /api/attendances/clock-in - Clock in
+- POST /api/attendances/clock-out - Clock out
+- POST /api/attendances - Create or update attendance manually
+- DELETE /api/attendances/:id - Delete attendance
+
 ## Project Structure
 
 ```
@@ -98,6 +110,7 @@ hr-attendance-system/
 │   │   ├── config.js
 │   │   └── database.js
 │   ├── controllers/
+│   │   ├── attendanceController.js
 │   │   ├── authController.js
 │   │   ├── departmentController.js
 │   │   ├── employeeController.js
@@ -106,10 +119,12 @@ hr-attendance-system/
 │   │   ├── authMiddleware.js
 │   │   └── validationMiddleware.js
 │   ├── models/
+│   │   ├── attendanceModel.js
 │   │   ├── departmentModel.js
 │   │   ├── employeeModel.js
 │   │   └── positionModel.js
 │   ├── routes/
+│   │   ├── attendanceRoutes.js
 │   │   ├── authRoutes.js
 │   │   ├── departmentRoutes.js
 │   │   ├── employeeRoutes.js
