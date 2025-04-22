@@ -1,0 +1,173 @@
+<!-- Salary View -->
+<div id="salaryView" class="p-6">
+    <div class="mb-6">
+        <h1 class="text-3xl font-semibold text-gray-800">Salary</h1>
+        <p class="text-gray-500">
+            View and download your salary payment records
+        </p>
+    </div>
+
+    <div class="flex justify-between mb-6">
+        <div></div>
+        <div class="flex space-x-4">
+            <div class="relative">
+                <select data-model="selectedYear"
+                    class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-black focus:border-black sm:text-sm rounded-md appearance-none">
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+            <div class="relative">
+                <input type="text" placeholder="Search pay slips..." data-model="paySlipSearch"
+                    class="w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black" />
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-md shadow-sm border border-gray-200">
+        <h2 class="text-xl font-semibold mb-6">
+            Pay Slips for <span data-bind="selectedYear">2025</span>
+        </h2>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pay Period</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issue Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Net Pay</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200" data-payslips>
+                    <!-- JavaScript will render rows here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="flex justify-between items-center mt-6 text-sm text-gray-500">
+            <div data-pagination-summary></div>
+            <div class="flex space-x-2">
+                <button data-prev-page class="px-3 py-1 border border-gray-300 rounded-md bg-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+                <button data-next-page class="px-3 py-1 border border-gray-300 rounded-md bg-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Pay Slip Modal -->
+<div data-modal class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="payslip-modal-title"
+    role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+        <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+            <div>
+                <div class="mt-3 text-center sm:mt-0 sm:text-left">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900" id="payslip-modal-title">
+                        Pay Slip Details
+                    </h3>
+                    <div class="mt-4 space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Pay Period</p>
+                                <p class="mt-1 text-sm text-gray-900" data-bind="selectedPaySlip.period"></p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Issue Date</p>
+                                <p class="mt-1 text-sm text-gray-900" data-bind="selectedPaySlip.issueDate"></p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Net Pay</p>
+                                <p class="mt-1 text-sm font-semibold text-gray-900" data-bind="selectedPaySlip.netPay"></p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Status</p>
+                                <p class="mt-1">
+                                    <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800" data-bind="selectedPaySlip.status"></span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Earnings</p>
+                            <div class="mt-2 border-t border-gray-200 pt-2">
+                                <div class="flex justify-between py-1">
+                                    <span class="text-sm text-gray-500">Basic Salary</span>
+                                    <span class="text-sm text-gray-900">Rp3.000.000</span>
+                                </div>
+                                <div class="flex justify-between py-1">
+                                    <span class="text-sm text-gray-500">Allowances</span>
+                                    <span class="text-sm text-gray-900">Rp500.000</span>
+                                </div>
+                                <div class="flex justify-between py-1">
+                                    <span class="text-sm text-gray-500">Overtime</span>
+                                    <span class="text-sm text-gray-900">Rp150.000</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Deductions</p>
+                            <div class="mt-2 border-t border-gray-200 pt-2">
+                                <div class="flex justify-between py-1">
+                                    <span class="text-sm text-gray-500">Tax</span>
+                                    <span class="text-sm text-gray-900">Rp150.000</span>
+                                </div>
+                                <div class="flex justify-between py-1">
+                                    <span class="text-sm text-gray-500">Insurance</span>
+                                    <span class="text-sm text-gray-900">Rp50.000</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-gray-200 pt-4 mt-4">
+                            <div class="flex justify-between">
+                                <span class="font-medium">Total Net Pay</span>
+                                <span class="font-semibold" data-bind="selectedPaySlip.netPay"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-5 sm:mt-6 flex justify-between">
+                <button type="button" data-download-modal
+                    class="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black sm:text-sm">
+                    Download PDF
+                </button>
+                <button type="button" data-close-modal
+                    class="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-black text-base font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black sm:text-sm">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/salary.js"></script>
