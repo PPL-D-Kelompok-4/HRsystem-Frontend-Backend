@@ -3,32 +3,26 @@ import db from "../db.js";
 
 const router = express.Router();
 
-router.get('/allemployees', (req, res) => {
-    res.render('allEmployees');
+router.get("/", (req, res) => {
+    const query = `
+        SELECT 
+            Karyawan.employeeID AS id,
+            Karyawan.nama,
+            Karyawan.email,
+            Departemen.nama_Departemen AS department,
+            Jabatan.nama_Jabatan AS position,
+            Karyawan.status_Karyawan
+        FROM Karyawan
+        JOIN Jabatan ON Karyawan.positionID = Jabatan.PositionID
+        JOIN Departemen ON Karyawan.departmentID = Departemen.departmentID
+    `;
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ message: "Database error" });
+        }
+        res.render("allEmployees", { employees: results }); // ✅ kirim data ke EJS
+    });
 });
-
-// router.get("/allemployees", (req, res) => {
-//     const query = `
-//         SELECT K.* from Karyawan
-//     `;
-//     db.query(query, (err, results) => {
-//         if (err) return res.status(500).send("Database error");
-//         res.send(results);
-//     });
-// });
-
-// router.get("/allemployees/:id", (req, res) => {
-//     const { id } = req.params;
-//     const query = `
-//         SELECT K.* from Karyawan K
-//         WHERE K.id = ${id}
-//     `;
-//     db.query(query, (err, results) => {
-//         if (err) return res.status(500).send("Database error");
-//         res.render("allEmployees", {
-//             userProfile
-//         });
-//     });
-// });
 
 export default router;

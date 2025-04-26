@@ -16,19 +16,4 @@ router.get("/", (req, res) => {
     });
 });
 
-// router.get("/karyawan", (req, res) => {
-//     const query = `
-
-//         SELECT K.*, J.nama_Jabatan, D.nama_Departemen
-//         FROM Karyawan K
-//         JOIN Jabatan J ON K.positionID = J.PositionID
-//         JOIN Departemen D ON K.departmentID = D.departmentID
-//     `;
-//     db.query(query, (err, results) => {
-//         if (err) return res.status(500).send("Database error");
-
-//         res.render("index", { karyawan: results });
-//     });
-// });
-
 export default router;

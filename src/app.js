@@ -82,10 +82,6 @@ app.get('/reports', (req, res) => {
     res.render('reports');
 });
 
-app.get('/allemployees', (req, res) => {
-    res.render('allEmployees');
-});
-
 app.get('/profile', (req, res) => {
     res.render('profile');
 });

@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS Karyawan (
   password VARCHAR(255) NOT NULL,
   positionID INT(11) NOT NULL,
   departmentID INT(11) NOT NULL,
-  status_Karyawan ENUM('Aktif', 'Non-Aktif') NOT NULL DEFAULT 'Aktif',
+  status_Karyawan ENUM('Aktif', 'Inaktif', 'Cuti') NOT NULL DEFAULT 'Aktif',
   tanggal_Bergabung DATE NOT NULL,
   PRIMARY KEY (employeeID),
   FOREIGN KEY (positionID) REFERENCES Jabatan(PositionID),
