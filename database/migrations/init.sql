@@ -34,6 +34,34 @@ CREATE TABLE IF NOT EXISTS Karyawan (
   FOREIGN KEY (departmentID) REFERENCES Departemen(departmentID)
 );
 
+-- Create Gaji table
+CREATE TABLE IF NOT EXISTS Gaji (
+  payrollID INT(11) NOT NULL AUTO_INCREMENT,
+  employeeID INT(11) NOT NULL,
+  bulan DATE NOT NULL,
+  tahun DATE NOT NULL,
+  gaji_Pokok DECIMAL(10,2) NOT NULL,
+  tunjangan DECIMAL(10,2) DEFAULT 0,
+  potongan DECIMAL(10,2) DEFAULT 0,
+  total_Gaji DECIMAL(10,2) NOT NULL,
+  status_Pembayaran ENUM('Lunas', 'Belum Lunas') NOT NULL DEFAULT 'Belum Lunas',
+  PRIMARY KEY (payrollID),
+  FOREIGN KEY (employeeID) REFERENCES Karyawan(employeeID)
+);
+
+-- Create Cuti table
+CREATE TABLE IF NOT EXISTS Cuti (
+  leaveID INT(11) NOT NULL AUTO_INCREMENT,
+  employeeID INT(11) NOT NULL,
+  tanggal_Pengajuan DATE NOT NULL,
+  tanggal_Mulai DATE NOT NULL,
+  tanggal_Selesai DATE NOT NULL,
+  keterangan_Cuti VARCHAR(100),
+  status ENUM('Diajukan', 'Disetujui', 'Ditolak') NOT NULL DEFAULT 'Diajukan',
+  PRIMARY KEY (leaveID),
+  FOREIGN KEY (employeeID) REFERENCES Karyawan(employeeID)
+);
+
 -- Create Kehadiran table
 CREATE TABLE IF NOT EXISTS Kehadiran (
   attendanceID INT(11) NOT NULL AUTO_INCREMENT,

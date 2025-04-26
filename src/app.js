@@ -20,6 +20,8 @@ import employeeRoutes from "./routes/employeeRoutes.js";
 import positionRoutes from "./routes/positionRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import attendanceRoutes from "./routes/attendanceRoutes.js";
+import payrollRoutes from "./routes/payrollRoutes.js";
+import leaveRoutes from "./routes/leaveRoutes.js";
 
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import allEmployeesRoutes from "./routes/allEmployeesRoutes.js";
@@ -28,13 +30,13 @@ import allEmployeesRoutes from "./routes/allEmployeesRoutes.js";
 const app = express();
 
 // Set EJS as view engine
-app.set('view engine', 'ejs');
+app.set("view engine", "ejs");
 app.use(expressLayouts);
 app.set("views", path.join(__dirname, "../views"));
 
 // Middleware
 app.use(cors());
-app.use( helmet({ contentSecurityPolicy: false, }) );
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -52,38 +54,40 @@ if (process.env.NODE_ENV !== "production") {
 app.use("/api/departments", departmentRoutes);
 app.use("/api/employees", employeeRoutes);
 app.use("/api/positions", positionRoutes);
+app.use("/api/payrolls", payrollRoutes);
+app.use("/api/leaves", leaveRoutes);
 app.use("/api/attendances", attendanceRoutes);
 app.use("/api/auth", authRoutes);
 
 app.use("/", dashboardRoutes);
 app.use("/allemployees", allEmployeesRoutes);
 
-app.get('/attendance', (req, res) => {
-    res.render('attendance');
+app.get("/attendance", (req, res) => {
+	res.render("attendance");
 });
 
-app.get('/allrequests', (req, res) => {
-    res.render('allrequests');
+app.get("/allrequests", (req, res) => {
+	res.render("allrequests");
 });
 
-app.get('/newrequests', (req, res) => {
-    res.render('newrequests');
+app.get("/newrequests", (req, res) => {
+	res.render("newrequests");
 });
 
-app.get('/salary', (req, res) => {
-    res.render('salary');
+app.get("/salary", (req, res) => {
+	res.render("salary");
 });
 
-app.get('/workhours', (req, res) => {
-    res.render('workhours');
+app.get("/workhours", (req, res) => {
+	res.render("workhours");
 });
 
-app.get('/reports', (req, res) => {
-    res.render('reports');
+app.get("/reports", (req, res) => {
+	res.render("reports");
 });
 
-app.get('/profile', (req, res) => {
-    res.render('profile');
+app.get("/profile", (req, res) => {
+	res.render("profile");
 });
 
 // 404 handler

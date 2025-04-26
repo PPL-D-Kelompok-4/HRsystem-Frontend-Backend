@@ -144,6 +144,100 @@ export const employeeValidationRules = {
 	],
 };
 
+// Payroll validation rules
+export const payrollValidationRules = {
+	create: [
+		body("employeeID")
+			.notEmpty()
+			.withMessage("Employee ID is required")
+			.isInt()
+			.withMessage("Employee ID must be an integer"),
+		body("bulan")
+			.notEmpty()
+			.withMessage("Month is required")
+			.isDate()
+			.withMessage("Month must be a valid date"),
+		body("tahun")
+			.notEmpty()
+			.withMessage("Year is required")
+			.isDate()
+			.withMessage("Year must be a valid date"),
+		body("gaji_Pokok")
+			.notEmpty()
+			.withMessage("Base salary is required")
+			.isFloat({ min: 0 })
+			.withMessage("Base salary must be a positive number"),
+		body("tunjangan")
+			.optional()
+			.isFloat({ min: 0 })
+			.withMessage("Allowance must be a positive number"),
+		body("potongan")
+			.optional()
+			.isFloat({ min: 0 })
+			.withMessage("Deduction must be a positive number"),
+		body("status_Pembayaran")
+			.optional()
+			.isIn(["Lunas", "Belum Lunas"])
+			.withMessage("Status must be either Lunas or Belum Lunas"),
+	],
+	update: [
+		param("id").isInt().withMessage("Invalid payroll ID"),
+		body("gaji_Pokok")
+			.optional()
+			.isFloat({ min: 0 })
+			.withMessage("Base salary must be a positive number"),
+		body("tunjangan")
+			.optional()
+			.isFloat({ min: 0 })
+			.withMessage("Allowance must be a positive number"),
+		body("potongan")
+			.optional()
+			.isFloat({ min: 0 })
+			.withMessage("Deduction must be a positive number"),
+		body("status_Pembayaran")
+			.optional()
+			.isIn(["Lunas", "Belum Lunas"])
+			.withMessage("Status must be either Lunas or Belum Lunas"),
+	],
+};
+
+// Leave validation rules
+export const leaveValidationRules = {
+	create: [
+		body("employeeID")
+			.notEmpty()
+			.withMessage("Employee ID is required")
+			.isInt()
+			.withMessage("Employee ID must be an integer"),
+		body("tanggal_Mulai")
+			.notEmpty()
+			.withMessage("Start date is required")
+			.isDate()
+			.withMessage("Start date must be a valid date"),
+		body("tanggal_Selesai")
+			.notEmpty()
+			.withMessage("End date is required")
+			.isDate()
+			.withMessage("End date must be a valid date"),
+		body("keterangan_Cuti")
+			.optional()
+			.isLength({ max: 100 })
+			.withMessage("Description must be less than 100 characters"),
+	],
+	updateStatus: [
+		param("id").isInt().withMessage("Invalid leave ID"),
+		body("status")
+			.notEmpty()
+			.withMessage("Status is required")
+			.isIn(["Diajukan", "Disetujui", "Ditolak"])
+			.withMessage("Status must be either Diajukan, Disetujui, or Ditolak"),
+		body("keterangan_Cuti")
+			.optional()
+			.isLength({ max: 100 })
+			.withMessage("Description must be less than 100 characters"),
+	],
+};
+
 // Attendance validation rules
 export const attendanceValidationRules = {
 	clockIn: [
