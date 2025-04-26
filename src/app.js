@@ -86,6 +86,10 @@ app.get("/reports", (req, res) => {
 	res.render("reports");
 });
 
+app.get("/addemployee", (req, res) => {
+	res.render("addEmployee");
+});
+
 app.get("/profile", (req, res) => {
 	res.render("profile");
 });
