@@ -1,149 +1,83 @@
 <% title = "HR System" %>
 
-            <!-- Dashboard View -->
-            <div x-show="currentView === 'dashboard'" class="p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <div>
-                        <h1 class="text-3xl font-semibold text-gray-800">Dashboard</h1>
-                        <p class="text-gray-500">Welcome to HR management dashboard.</p>
-                    </div>
-                    <button @click="currentView = 'addEmployee'" class="bg-black text-white px-4 py-2 rounded-md">
-                        Add Employee
-                    </button>
-                </div>
+<!-- Dashboard View -->
+<div id="dashboard-view" class="p-6">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-3xl font-semibold text-gray-800">Dashboard</h1>
+            <p class="text-gray-500">Welcome to HR management dashboard.</p>
+        </div>
+            <button id="dashboard-add-employee" class="bg-black text-white px-4 py-2 rounded-md">
+                <a href="#">
 
-                <!-- Stats Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                    <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200">
-                        <p class="text-gray-500 mb-1">Total Employees</p>
-                        <p class="text-3xl font-bold" x-text="employees.length"></p>
-                    </div>
+                    Add Employee
+                </a>
+            </button>
+    </div>
 
-                    <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200">
-                        <p class="text-gray-500 mb-1">Open Positions</p>
-                        <p class="text-3xl font-bold">7</p>
-                    </div>
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200">
+            <p class="text-gray-500 mb-1">Total Employees</p>
+            <p class="text-3xl font-bold"><%= totalEmployees %></p>
+            <!-- <p class="text-3xl font-bold" data-dashboard-total-employees>0</p> -->
+        </div>
 
-                    <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200">
-                        <p class="text-gray-500 mb-1">Pending Reviews</p>
-                        <p class="text-3xl font-bold"
-                            x-text="leaveRequests.filter(lr => lr.status === 'Pending').length"></p>
-                    </div>
+        <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200">
+            <p class="text-gray-500 mb-1">Open Positions</p>
+            <p class="text-3xl font-bold">7</p>
+        </div>
 
-                    <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200">
-                        <p class="text-gray-500 mb-1">Leave Request</p>
-                        <p class="text-3xl font-bold" x-text="leaveRequests.length"></p>
-                    </div>
-                </div>
+        <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200">
+            <p class="text-gray-500 mb-1">Pending Reviews</p>
+            <p class="text-3xl font-bold" data-dashboard-pending-reviews>0</p>
+        </div>
 
-                <!-- Employee Overview Chart -->
-                <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200 mb-6">
-                    <div class="flex items-center justify-between">
-                        <h2 class="text-xl font-semibold">Employee Overview</h2>
-                        <button @click="initEmployeeChart()"
-                            class="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-md flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20"
-                                fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            Refresh Chart
-                        </button>
-                    </div>
-                    <p class="text-gray-500 text-sm mb-4">
-                        Employee distribution by department
-                    </p>
-                    <div>
-                        <canvas id="employeeChart" width="600" height="200"></canvas>
-                    </div>
-                </div>
+        <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200">
+            <p class="text-gray-500 mb-1">Leave Request</p>
+            <p class="text-3xl font-bold" data-dashboard-leave-requests>0</p>
+        </div>
+    </div>
 
+    <!-- Employee Overview Chart -->
+    <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200 mb-6">
+        <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold">Employee Overview</h2>
+            <button id="refresh-employee-chart" class="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-md flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                </svg>
+                Refresh Chart
+            </button>
+        </div>
+        <p class="text-gray-500 text-sm mb-4">Employee distribution by department</p>
+        <div>
+            <canvas id="employeeChart" width="600" height="200"></canvas>
+        </div>
+    </div>
 
-                <!-- Two Column Layout -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Leave Requests -->
-                    <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200">
-                        <h2 class="text-xl font-semibold mb-1">Leave Requests</h2>
-                        <p class="text-gray-500 text-sm mb-4">
-                            Pending leave requests requiring approval
-                        </p>
-
-                        <div class="space-y-4">
-                            <template x-for="(request, index) in pendingLeaveRequests.slice(0, 3)" :key="index">
-                                <div class="border-b pb-4 last:border-b-0 last:pb-0">
-                                    <div class="flex justify-between">
-                                        <div>
-                                            <p class="font-medium" x-text="request.employee"></p>
-                                            <p class="text-gray-500"
-                                                x-text="request.type + ' - ' + request.days + ' day' + (request.days > 1 ? 's' : '')">
-                                            </p>
-                                            <p class="text-gray-400 text-sm"
-                                                x-text="request.startDate + (request.endDate !== request.startDate ? ' - ' + request.endDate : '')">
-                                            </p>
-                                        </div>
-                                        <div class="flex items-center space-x-2">
-                                            <span
-                                                class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-md text-sm">Pending</span>
-                                            <button @click="approveLeaveRequest(getLeaveRequestIndex(request))"
-                                                class="text-green-600 hover:text-green-800">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
-                                                    viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd"
-                                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                        clip-rule="evenodd" />
-                                                </svg>
-                                            </button>
-                                            <button @click="rejectLeaveRequest(getLeaveRequestIndex(request))"
-                                                class="text-red-600 hover:text-red-800">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
-                                                    viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd"
-                                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                        clip-rule="evenodd" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </template>
-                            <div x-show="pendingLeaveRequests.length === 0" class="text-center py-4 text-gray-500">
-                                No pending leave requests
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Recent Hires -->
-                    <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200">
-                        <h2 class="text-xl font-semibold mb-1">Recent Hires</h2>
-                        <p class="text-gray-500 text-sm mb-4">
-                            New employees in the last 30 days
-                        </p>
-
-                        <div class="space-y-4">
-                            <template x-for="(employee, index) in recentHires.slice(0, 3)" :key="index">
-                                <div class="flex justify-between items-center">
-                                    <div class="flex items-center">
-                                        <div
-                                            class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                                            <span class="text-gray-600 font-medium"
-                                                x-text="employee.firstName.charAt(0) + employee.lastName.charAt(0)"></span>
-                                        </div>
-                                        <div class="ml-3">
-                                            <p class="font-medium"
-                                                x-text="employee.firstName + ' ' + employee.lastName"></p>
-                                            <p class="text-gray-500 text-sm" x-text="employee.position"></p>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <p x-text="formatDate(employee.startDate)"></p>
-                                    </div>
-                                </div>
-                            </template>
-                            <div x-show="recentHires.length === 0" class="text-center py-4 text-gray-500">
-                                No recent hires
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <!-- Two Column Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Leave Requests -->
+        <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200">
+            <h2 class="text-xl font-semibold mb-1">Leave Requests</h2>
+            <p class="text-gray-500 text-sm mb-4">Pending leave requests requiring approval</p>
+            <div class="space-y-4" data-dashboard-pending-leave-requests></div>
+            <div data-dashboard-no-pending-requests class="hidden text-center py-4 text-gray-500">
+                No pending leave requests
             </div>
+        </div>
+
+        <!-- Recent Hires -->
+        <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200">
+            <h2 class="text-xl font-semibold mb-1">Recent Hires</h2>
+            <p class="text-gray-500 text-sm mb-4">New employees in the last 30 days</p>
+            <div class="space-y-4" data-dashboard-recent-hires></div>
+            <div data-dashboard-no-recent-hires class="hidden text-center py-4 text-gray-500">
+                No recent hires
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/dashboard.js"></script>

@@ -12,20 +12,20 @@ employeeToggleBtn.addEventListener('click', () => {
     employeeSubmenu.classList.toggle('hidden');
 });
 
-const userProfile = {
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@company.com",
-    phone: "(123) 456-7890",
-    dateOfBirth: "1990-01-01",
-    department: "Engineering",
-    position: "Senior Developer",
-    address: {
-        street: "123 Main St",
-        city: "San Francisco",
-        state: "CA",
-        zipCode: "94105",
-        country: "USA",
-    },
-    emergencyContact: "Jane Doe (Wife) - (123) 456-7891",
-};
+// const userProfile = {
+//     firstName: "John",
+//     lastName: "Doe",
+//     email: "john.doe@company.com",
+//     phone: "(123) 456-7890",
+//     dateOfBirth: "1990-01-01",
+//     department: "Engineering",
+//     position: "Senior Developer",
+//     address: {
+//         street: "123 Main St",
+//         city: "San Francisco",
+//         state: "CA",
+//         zipCode: "94105",
+//         country: "USA",
+//     },
+//     emergencyContact: "Jane Doe (Wife) - (123) 456-7891",
+// };
