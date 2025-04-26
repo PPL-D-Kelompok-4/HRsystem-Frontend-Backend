@@ -21,6 +21,8 @@ import positionRoutes from "./routes/positionRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import attendanceRoutes from "./routes/attendanceRoutes.js";
 
+import dashboardRoutes from "./routes/dashboardRoutes.js";
+
 // Create Express app
 const app = express();
 
@@ -52,10 +54,8 @@ app.use("/api/positions", positionRoutes);
 app.use("/api/attendances", attendanceRoutes);
 app.use("/api/auth", authRoutes);
 
-// Root route
-app.get('/', (req, res) => {
-    res.render('index');
-});
+app.use("/", dashboardRoutes);
+app.use("/allemployees", allEmployeeRoutes);
 
 app.get('/attendance', (req, res) => {
     res.render('attendance');
@@ -63,6 +63,10 @@ app.get('/attendance', (req, res) => {
 
 app.get('/allrequests', (req, res) => {
     res.render('allrequests');
+});
+
+app.get('/newrequests', (req, res) => {
+    res.render('newrequests');
 });
 
 app.get('/salary', (req, res) => {
@@ -75,6 +79,10 @@ app.get('/workhours', (req, res) => {
 
 app.get('/reports', (req, res) => {
     res.render('reports');
+});
+
+app.get('/profile', (req, res) => {
+    res.render('profile');
 });
 
 // 404 handler

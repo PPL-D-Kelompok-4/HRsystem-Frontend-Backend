@@ -1,0 +1,26 @@
+<% title = "HR System" %>
+
+  <h1>Daftar Karyawan</h1>
+
+  <table border="1" cellpadding="10">
+    <tr>
+      <th>Nama</th>
+      <th>Email</th>
+      <th>Telepon</th>
+      <th>Jabatan</th>
+      <th>Departemen</th>
+      <th>Status</th>
+      <th>Bergabung</th>
+    </tr>
+    <% karyawan.forEach(k => { %>
+      <tr>
+        <td><%= k.nama %></td>
+        <td><%= k.email %></td>
+        <td><%= k.no_Telp %></td>
+        <td><%= k.nama_Jabatan %></td>
+        <td><%= k.nama_Departemen %></td>
+        <td><%= k.status_Karyawan %></td>
+        <td><%= k.tanggal_Bergabung.toISOString().split('T')[0] %></td>
+      </tr>
+    <% }) %>
+  </table>

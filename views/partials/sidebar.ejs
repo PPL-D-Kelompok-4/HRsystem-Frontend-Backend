@@ -3,7 +3,7 @@
     <div class="p-6 flex flex-col items-center justify-center border-b border-gray-200">
         <div class="w-16 h-16 bg-gray-300 rounded-full mb-2"></div>
         <p id="user-name" class="text-gray-700 font-medium">
-            John Doeaa
+            <%= userProfile %>
         </p>
     </div>
 
@@ -74,7 +74,7 @@
                     </svg>
                     <span>All Requests</span>
                 </a>
-                <a href="#" class="flex items-center space-x-3 text-gray-700 hover:bg-gray-200 px-2 py-2 rounded-md">
+                <a href="/newrequests" class="flex items-center space-x-3 text-gray-700 hover:bg-gray-200 px-2 py-2 rounded-md">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round">
@@ -152,7 +152,7 @@
         </div>
 
         <div id="employee-toggle" class="px-4 py-2 cursor-pointer">
-            <div @click="toggleMenu('employees')"
+            <div
                 class="flex items-center justify-between text-gray-700 hover:bg-gray-200 px-2 py-2 rounded-md cursor-pointer">
                 <div class="flex items-center space-x-3">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 24 24"
@@ -174,7 +174,8 @@
             </div>
 
             <div id="employee-submenu" class="pl-10 mt-1 hidden">
-                <a href="#" class="flex items-center space-x-3 text-gray-700 hover:bg-gray-200 px-2 py-2 rounded-md">
+                <a href="/allemployee" 
+                    class="flex items-center space-x-3 text-gray-700 hover:bg-gray-200 px-2 py-2 rounded-md">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round">
@@ -183,7 +184,7 @@
                     </svg>
                     <span>All Employees</span>
                 </a>
-                <a href="#" @click.prevent="currentView = 'addEmployee'"
+                <a href="#"
                     class="flex items-center space-x-3 text-gray-700 hover:bg-gray-200 px-2 py-2 rounded-md">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -197,7 +198,7 @@
         </div>
 
         <div class="px-4 py-2">
-            <a href="#" onclick="setView('profile')"
+            <a href="/profile"
                 class="flex items-center space-x-3 text-gray-700 hover:bg-gray-200 px-2 py-2 rounded-md">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
