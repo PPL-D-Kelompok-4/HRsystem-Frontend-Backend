@@ -3,6 +3,10 @@ import db from "../db.js";
 
 const router = express.Router();
 
+router.get('/allemployees', (req, res) => {
+    res.render('allEmployees');
+});
+
 // router.get("/allemployees", (req, res) => {
 //     const query = `
 //         SELECT K.* from Karyawan
@@ -26,3 +30,5 @@ const router = express.Router();
 //         });
 //     });
 // });
+
+export default router;

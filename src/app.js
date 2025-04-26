@@ -22,6 +22,7 @@ import authRoutes from "./routes/authRoutes.js";
 import attendanceRoutes from "./routes/attendanceRoutes.js";
 
 import dashboardRoutes from "./routes/dashboardRoutes.js";
+import allEmployeesRoutes from "./routes/allEmployeesRoutes.js";
 
 // Create Express app
 const app = express();
@@ -55,7 +56,7 @@ app.use("/api/attendances", attendanceRoutes);
 app.use("/api/auth", authRoutes);
 
 app.use("/", dashboardRoutes);
-app.use("/allemployees", allEmployeeRoutes);
+app.use("/allemployees", allEmployeesRoutes);
 
 app.get('/attendance', (req, res) => {
     res.render('attendance');
@@ -79,6 +80,10 @@ app.get('/workhours', (req, res) => {
 
 app.get('/reports', (req, res) => {
     res.render('reports');
+});
+
+app.get('/allemployees', (req, res) => {
+    res.render('allEmployees');
 });
 
 app.get('/profile', (req, res) => {
