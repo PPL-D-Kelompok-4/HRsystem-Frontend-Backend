@@ -91,7 +91,7 @@
                     </tr>
                 <% } else { %>
                     <% employees.forEach((employee, index) => { %>
-                        <tr>
+                        <tr id="employeeRow-<%= index %>" data-id="<%= employee.id %>">
                             <td class="px-3 py-4">
                                 <input type="checkbox" class="rounded border-gray-300" />
                             </td>
@@ -104,10 +104,26 @@
                             <td class="px-3 py-4 text-sm text-gray-500"><%= employee.position %></td>
                             <td class="px-3 py-4">
                                 <span class="px-2 py-1 text-xs rounded-full 
-                                    <%= employee.status === 'On Leave' ? 'bg-yellow-100 text-yellow-800' :
-                                        employee.status === 'Inactive' ? 'bg-gray-100 text-gray-800' :
-                                        'bg-black text-white' %>">
-                                    <%= employee.status_Karyawan %>
+                                    <% if (employee.status_Karyawan === 'Aktif') { %> 
+                                        bg-black text-white 
+                                    <% } else if (employee.status_Karyawan === 'Cuti') { %> 
+                                        bg-yellow-100 text-yellow-800 
+                                    <% } else if (employee.status_Karyawan === 'Inaktif') { %> 
+                                        bg-gray-100 text-gray-800 
+                                    <% } else { %> 
+                                        bg-gray-300 text-gray-700 
+                                    <% } %>">
+                                    
+                                    <% if (employee.status_Karyawan === 'Aktif') { %>
+                                        Active
+                                    <% } else if (employee.status_Karyawan === 'Cuti') { %>
+                                        On Leave
+                                    <% } else if (employee.status_Karyawan === 'Inaktif') { %>
+                                        Inactive
+                                    <% } else { %>
+                                        Unknown
+                                    <% } %>
+
                                 </span>
                             </td>
                             <td class="px-3 py-4 text-sm text-gray-500">
@@ -122,12 +138,21 @@
                                     <!-- Menu Dropdown -->
                                     <div id="employeeMenu-<%= index %>" class="hidden absolute mt-8 w-48 bg-white rounded-md shadow-lg border z-20">
                                         <div class="py-1">
-                                            <button onclick="editEmployee(<%= index %>)" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Edit</button>
-                                            <button onclick="changeEmployeeStatus(<%= index %>, 'Active')" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Set as Active</button>
-                                            <button onclick="changeEmployeeStatus(<%= index %>, 'On Leave')" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Set as On Leave</button>
-                                            <button onclick="changeEmployeeStatus(<%= index %>, 'Inactive')" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Set as Inactive</button>
-                                            <button onclick="deleteEmployee(<%= index %>)" class="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100">Delete</button>
-                                        </div>
+                                            <button onclick="editEmployee(<%= index %>)" 
+                                                class="block w-full text-left px-4 py-2 hover:bg-gray-100">Edit</button>
+                                        
+                                            <button onclick="changeEmployeeStatus(<%= index %>, '<%= employee.id %>', 'Active')" 
+                                                class="block w-full text-left px-4 py-2 hover:bg-gray-100">Set as Active</button>
+                                        
+                                            <button onclick="changeEmployeeStatus(<%= index %>, '<%= employee.id %>', 'On Leave')" 
+                                                class="block w-full text-left px-4 py-2 hover:bg-gray-100">Set as On Leave</button>
+                                        
+                                            <button onclick="changeEmployeeStatus(<%= index %>, '<%= employee.id %>', 'Inactive')" 
+                                                class="block w-full text-left px-4 py-2 hover:bg-gray-100">Set as Inactive</button>
+                                        
+                                            <button onclick="deleteEmployee(<%= index %>)" 
+                                                class="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100">Delete</button>
+                                        </div>                                        
                                     </div>
                                 </div>
                             </td>                                                        

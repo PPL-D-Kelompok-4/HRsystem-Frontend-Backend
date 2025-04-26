@@ -93,10 +93,57 @@ document.addEventListener("DOMContentLoaded", () => {
         // Optional: Redirect to edit page with ID
     };
 
-    window.changeEmployeeStatus = (index, status) => {
-        alert(`Set status of employee index ${index} to ${status}`);
-        // Optional: Call API or refresh page
-    };
+    window.changeEmployeeStatus = (index, employeeId, status) => {
+        // Mapping dari English ke DB ENUM
+        const statusMapping = {
+            "Active": "Aktif",
+            "On Leave": "Cuti",
+            "Inactive": "Inaktif"
+        };
+    
+        fetch(`/allemployees/${employeeId}/status`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ status_Karyawan: statusMapping[status] })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to update status");
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data.message);
+    
+            // Update tampilan status di halaman tanpa reload
+            const row = document.getElementById(`employeeRow-${index}`);
+            const statusCell = row.querySelector("td:nth-child(7) span");
+    
+            if (statusCell) {
+                statusCell.textContent = status;
+    
+                // Update warna status
+                if (status === "Active") {
+                    statusCell.className = "px-2 py-1 text-xs rounded-full bg-black text-white";
+                } else if (status === "On Leave") {
+                    statusCell.className = "px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800";
+                } else if (status === "Inactive") {
+                    statusCell.className = "px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800";
+                } else {
+                    statusCell.className = "px-2 py-1 text-xs rounded-full bg-gray-300 text-gray-700";
+                }
+            }
+    
+            // Tutup menu dropdown setelah update
+            toggleEmployeeMenu(index);
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Failed to update employee status");
+        });
+    };       
 
     window.deleteEmployee = (index) => {
         alert("Delete employee index: " + index);

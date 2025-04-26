@@ -25,4 +25,21 @@ router.get("/", (req, res) => {
     });
 });
 
+router.put('/:employeeId/status', (req, res) => {
+    const { employeeId } = req.params;
+    const { status_Karyawan } = req.body;
+
+    // query untuk update status di database
+    const query = 'UPDATE Karyawan SET status_Karyawan = ? WHERE employeeID = ?';
+    db.query(query, [status_Karyawan, employeeId], (err, result) => {
+        if (err) {
+            console.error('Failed to update employee status:', err);
+            return res.status(500).json({ message: 'Failed to update employee status' });
+        }
+
+        res.json({ message: 'Employee status updated successfully' });
+    });
+});
+
+
 export default router;

@@ -1,0 +1,140 @@
+<!-- Add Employee View -->
+<div id="add-employee-view" class="p-6">
+    <div class="mb-6">
+        <h1 id="add-employee-title" class="text-3xl font-semibold text-gray-800">
+            Add New Employee
+        </h1>
+        <p class="text-gray-500">
+            Create a new employee record in the system.
+        </p>
+    </div>
+
+    <div class="bg-white p-6 rounded-md shadow-sm border border-gray-200">
+        <form id="addEmployeeForm" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="firstName" class="block text-sm font-medium text-gray-700">First Name</label>
+                    <input type="text" id="firstName"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        required />
+                </div>
+                <div>
+                    <label for="lastName" class="block text-sm font-medium text-gray-700">Last Name</label>
+                    <input type="text" id="lastName"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        required />
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="email"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        required />
+                </div>
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                    <input type="tel" id="phone"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        required />
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="department" class="block text-sm font-medium text-gray-700">Department</label>
+                    <select id="department"
+                        class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 rounded-md sm:text-sm"
+                        required>
+                        <option value="" selected disabled>Select a department</option>
+                        <option value="Human Resources">Human Resources</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Information Technology">Information Technology</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Operations">Operations</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="position" class="block text-sm font-medium text-gray-700">Position</label>
+                    <select id="position"
+                        class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 rounded-md sm:text-sm"
+                        required>
+                        <option value="" selected disabled>Select a position</option>
+                        <option value="Manager">Manager</option>
+                        <option value="Supervisor">Supervisor</option>
+                        <option value="Staff">Staff</option>
+                        <option value="Intern">Intern</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="startDate" class="block text-sm font-medium text-gray-700">Start Date</label>
+                    <input type="date" id="startDate"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        required />
+                </div>
+                <div></div>
+            </div>
+
+            <div class="space-y-6">
+                <div>
+                    <label for="street" class="block text-sm font-medium text-gray-700">Street Address</label>
+                    <input type="text" id="street"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        required />
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="city" class="block text-sm font-medium text-gray-700">City</label>
+                        <input type="text" id="city"
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                            required />
+                    </div>
+                    <div>
+                        <label for="state" class="block text-sm font-medium text-gray-700">State</label>
+                        <input type="text" id="state"
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                            required />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="zipCode" class="block text-sm font-medium text-gray-700">ZIP Code</label>
+                        <input type="number" id="zipCode"
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                            required />
+                    </div>
+                    <div>
+                        <label for="country" class="block text-sm font-medium text-gray-700">Country</label>
+                        <input type="text" id="country"
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                            required />
+                    </div>
+                </div>
+
+                <div>
+                    <label for="emergencyContact" class="block text-sm font-medium text-gray-700">Emergency Contact</label>
+                    <input type="text" id="emergencyContact"
+                        placeholder="Name (Relationship) - Phone Number"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        required />
+                </div>
+            </div>
+
+            <div>
+                <button type="submit"
+                    id="submitEmployeeBtn"
+                    class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800">
+                    Add Employee
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="/js/addEmployee.js"></script>
