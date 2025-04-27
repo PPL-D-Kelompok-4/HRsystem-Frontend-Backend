@@ -109,3 +109,10 @@ INSERT INTO Karyawan (
   'Aktif',
   '2023-01-01'
 );
+
+-- Insert sample data for Cuti
+INSERT INTO Cuti (employeeID, tanggal_Pengajuan, tanggal_Mulai, tanggal_Selesai, keterangan_Cuti, status) VALUES
+(1, '2023-01-01', '2023-01-05', '2023-01-10', 'Cuti Sakit', 'Disetujui'),
+(2, '2023-01-10', '2023-01-15', '2023-01-20', 'Cuti Ijin', 'Diajukan');
+(3, '2023-01-15', '2023-01-20', '2023-01-25', 'Cuti Sakit', 'Ditolak');
+(4, '2023-01-20', '2023-01-25', '2023-01-30', 'Cuti Ijin', 'Disetujui');
