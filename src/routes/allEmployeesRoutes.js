@@ -115,7 +115,7 @@ router.post('/edit/:employeeId', async (req, res) => {
             [fullName, email, phone, posResult[0].PositionID, deptResult[0].departmentID, startDate, employeeId]
         );
 
-        res.redirect("/allemployees");
+        res.status(200).json({ success: true });
     } catch (error) {
         console.error(error);
         res.status(500).send("Failed to update employee");

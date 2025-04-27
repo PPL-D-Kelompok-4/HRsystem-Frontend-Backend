@@ -29,42 +29,64 @@ function resetForm() {
     }
 }
 
-// // Simpan employee baru atau update
-// function submitNewEmployee(event) {
-//     event.preventDefault();
+// Tambahkan event listener untuk submit form
+addEmployeeForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    
+    const newEmployee = {
+        firstName: employeeFields.firstName.value,
+        lastName: employeeFields.lastName.value,
+        email: employeeFields.email.value,
+        phone: employeeFields.phone.value,
+        department: employeeFields.department.value,
+        position: employeeFields.position.value,
+        startDate: employeeFields.startDate.value,
+    };
 
-//     const newEmployee = {
-//         firstName: employeeFields.firstName.value,
-//         lastName: employeeFields.lastName.value,
-//         email: employeeFields.email.value,
-//         phone: employeeFields.phone.value,
-//         department: employeeFields.department.value,
-//         position: employeeFields.position.value,
-//         startDate: employeeFields.startDate.value,
-//     };
+    const isEditMode = window.location.pathname.includes("/edit/");
 
-//     // Kirim data ke server
-//     fetch('/addemployee', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(newEmployee),
-//     })
-//     .then(response => {
-//         if (response.ok) {
-//             alert('Employee added successfully!');
-//             resetForm();
-//         } else {
-//             alert('Failed to add employee.');
-//         }
-//     })
-//     .catch(error => {
-//         console.error('Error:', error);
-//         alert('Error submitting employee.');
-//     });
-// }
+    try {
+        const response = await fetch(addEmployeeForm.action, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newEmployee),
+        });
 
+        if (!response.ok) throw new Error('Server Error');
 
-// // Attach event listener
-// addEmployeeForm.addEventListener("submit", submitNewEmployee);
+        const result = await response.json();
+
+        if (isEditMode) {
+            await Swal.fire({
+                icon: 'success',
+                title: 'Employee Updated!',
+                text: 'The employee data has been successfully updated.',
+                confirmButtonColor: '#000',
+            });
+            window.location.href = "/allemployees";
+        } else {
+            await Swal.fire({
+                icon: 'success',
+                title: 'Employee Added!',
+                html: `
+                    <div style="text-align: left;">
+                        <b>Email:</b> ${result.email}<br>
+                        <b>Password:</b> ${result.password}
+                    </div>
+                `,
+                confirmButtonColor: '#000',
+            });
+            window.location.href = "/allemployees";
+        }
+    } catch (error) {
+        console.error(error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: isEditMode ? 'Failed to update employee.' : 'Failed to add employee.',
+            confirmButtonColor: '#d33',
+        });
+    }
+});

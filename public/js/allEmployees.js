@@ -185,23 +185,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.deleteEmployee = (index) => {
         const employeeId = rows[index].dataset.id;
-        if (!confirm("Are you sure you want to delete this employee?")) return;
-
-        fetch(`/allemployees/${employeeId}`, {
-            method: "DELETE"
-        })
-        .then(response => {
-            if (!response.ok) throw new Error("Failed to delete employee");
-            rows[index].remove();
-            rows = Array.from(tableBody.querySelectorAll("tr"));
-            showPage(currentPage);
-            alert("Employee deleted successfully!");
-        })
-        .catch(err => {
-            console.error(err);
-            alert("Failed to delete employee.");
+    
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#000000',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/allemployees/${employeeId}`, {
+                    method: "DELETE"
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error("Failed to delete employee");
+                    rows[index].remove();
+                    rows = Array.from(tableBody.querySelectorAll("tr"));
+                    showPage(currentPage);
+                    Swal.fire(
+                        'Deleted!',
+                        'Employee has been deleted.',
+                        'success'
+                    );
+                })
+                .catch(err => {
+                    console.error(err);
+                    Swal.fire(
+                        'Failed!',
+                        'Failed to delete employee.',
+                        'error'
+                    );
+                });
+            }
         });
-    };
+    };    
 
     window.changeEmployeeStatus = (index, employeeId, status) => {
         const statusMapping = {
