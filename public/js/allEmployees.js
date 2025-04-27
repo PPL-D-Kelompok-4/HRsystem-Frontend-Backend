@@ -3,10 +3,46 @@ document.addEventListener("DOMContentLoaded", () => {
     const sortMenuToggle = document.getElementById("sortMenuToggle");
     const sortDropdown = document.getElementById("sortDropdown");
     const sortLabel = document.getElementById("sortLabel");
+    const employeeCountText = document.getElementById("employeeCountText");
+    const prevPageBtn = document.getElementById("prevPageBtn");
+    const nextPageBtn = document.getElementById("nextPageBtn");
 
+    const tableBody = document.getElementById("employeeTableBody");
+    let rows = Array.from(tableBody.querySelectorAll("tr"));
+    let currentPage = 1;
+    const rowsPerPage = 10;
     let employeeSortType = "name-asc";
 
-    // 🔽 Dropdown toggle
+    // Pagination setup
+    function showPage(page) {
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+
+        rows.forEach((row, index) => {
+            row.style.display = (index >= start && index < end) ? "" : "none";
+        });
+
+        employeeCountText.textContent = `Showing ${Math.min(start + 1, rows.length)} - ${Math.min(end, rows.length)} of ${rows.length} employees`;
+    }
+
+    prevPageBtn.addEventListener("click", () => {
+        if (currentPage > 1) {
+            currentPage--;
+            showPage(currentPage);
+        }
+    });
+
+    nextPageBtn.addEventListener("click", () => {
+        if (currentPage * rowsPerPage < rows.length) {
+            currentPage++;
+            showPage(currentPage);
+        }
+    });
+
+    // Initial load
+    showPage(currentPage);
+
+    // Sort Dropdown toggle
     sortMenuToggle.addEventListener("click", () => {
         sortDropdown.classList.toggle("hidden");
     });
@@ -16,40 +52,29 @@ document.addEventListener("DOMContentLoaded", () => {
             employeeSortType = btn.dataset.sort;
             sortLabel.textContent = getSortLabel(employeeSortType);
             sortTableRows(employeeSortType);
+            sortDropdown.classList.add("hidden"); // Hide dropdown after selecting
+            currentPage = 1;
+            showPage(currentPage);
         });
     });
 
-    // 🔍 Search filter
-    employeeSearchInput.addEventListener("input", (e) => {
-        const search = e.target.value.toLowerCase();
-        const rows = document.querySelectorAll("#employeeTableBody tr");
-
-        rows.forEach(row => {
-            const name = row.querySelector("td:nth-child(3)")?.textContent.toLowerCase();
-            row.style.display = name.includes(search) ? "" : "none";
-        });
-    });
-
-    // 🔀 Sort helper
+    // Sort helper
     function sortTableRows(sortType) {
-        const tableBody = document.getElementById("employeeTableBody");
-        const rows = Array.from(tableBody.querySelectorAll("tr"));
-
         rows.sort((a, b) => {
             const nameA = a.querySelector("td:nth-child(3)")?.textContent.toLowerCase();
             const nameB = b.querySelector("td:nth-child(3)")?.textContent.toLowerCase();
-            const idA = a.querySelector("td:nth-child(2)")?.textContent;
-            const idB = b.querySelector("td:nth-child(2)")?.textContent;
+            const idA = a.querySelector("td:nth-child(2)")?.textContent.replace("EMP", "");
+            const idB = b.querySelector("td:nth-child(2)")?.textContent.replace("EMP", "");
 
             switch (sortType) {
                 case "name-asc": return nameA.localeCompare(nameB);
                 case "name-desc": return nameB.localeCompare(nameA);
-                case "id": return idA.localeCompare(idB);
+                case "id": return parseInt(idA) - parseInt(idB);
                 default: return 0;
             }
         });
 
-        rows.forEach(row => tableBody.appendChild(row)); // Re-append in new order
+        rows.forEach(row => tableBody.appendChild(row)); // reorder table
     }
 
     function getSortLabel(type) {
@@ -61,12 +86,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 🧭 Menu toggle
+    // Search filter
+    employeeSearchInput.addEventListener("input", (e) => {
+        const search = e.target.value.toLowerCase();
+        rows.forEach(row => {
+            const name = row.querySelector("td:nth-child(3)")?.textContent.toLowerCase();
+            row.style.display = name.includes(search) ? "" : "none";
+        });
+    });
+
+    // Menu toggle
     window.toggleEmployeeMenu = (index) => {
         const menu = document.getElementById(`employeeMenu-${index}`);
         const button = document.getElementById(`employeeMenuButton-${index}`);
     
-        // Tutup semua menu lain, reset semua tombol ke z-10
         document.querySelectorAll("[id^='employeeMenu-']").forEach(m => {
             if (m !== menu) m.classList.add("hidden");
         });
@@ -74,12 +107,11 @@ document.addEventListener("DOMContentLoaded", () => {
             b.classList.remove("z-30");
             b.classList.add("z-10");
         });
-    
-        // Toggle menu
+
         if (menu.classList.contains('hidden')) {
             menu.classList.remove('hidden');
             button.classList.remove('z-10');
-            button.classList.add('z-30'); // Yang ditekan z-30
+            button.classList.add('z-30');
         } else {
             menu.classList.add('hidden');
             button.classList.remove('z-30');
@@ -87,14 +119,34 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-
     window.editEmployee = (index) => {
-        alert("Edit employee index: " + index);
-        // Optional: Redirect to edit page with ID
+        const employeeId = rows[index].dataset.id;
+        if (employeeId) {
+            window.location.href = `/allemployees/edit/${employeeId}`;
+        }
+    };
+
+    window.deleteEmployee = (index) => {
+        const employeeId = rows[index].dataset.id;
+        if (!confirm("Are you sure you want to delete this employee?")) return;
+
+        fetch(`/allemployees/${employeeId}`, {
+            method: "DELETE"
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to delete employee");
+            rows[index].remove();
+            rows = Array.from(tableBody.querySelectorAll("tr"));
+            showPage(currentPage);
+            alert("Employee deleted successfully!");
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Failed to delete employee.");
+        });
     };
 
     window.changeEmployeeStatus = (index, employeeId, status) => {
-        // Mapping dari English ke DB ENUM
         const statusMapping = {
             "Active": "Aktif",
             "On Leave": "Cuti",
@@ -103,53 +155,34 @@ document.addEventListener("DOMContentLoaded", () => {
     
         fetch(`/allemployees/${employeeId}/status`, {
             method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ status_Karyawan: statusMapping[status] })
         })
         .then(response => {
-            if (!response.ok) {
-                throw new Error("Failed to update status");
-            }
+            if (!response.ok) throw new Error("Failed to update status");
             return response.json();
         })
-        .then(data => {
-            console.log(data.message);
-    
-            // Update tampilan status di halaman tanpa reload
+        .then(() => {
             const row = document.getElementById(`employeeRow-${index}`);
             const statusCell = row.querySelector("td:nth-child(7) span");
-    
+
             if (statusCell) {
                 statusCell.textContent = status;
-    
-                // Update warna status
                 if (status === "Active") {
                     statusCell.className = "px-2 py-1 text-xs rounded-full bg-black text-white";
                 } else if (status === "On Leave") {
                     statusCell.className = "px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800";
                 } else if (status === "Inactive") {
                     statusCell.className = "px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800";
-                } else {
-                    statusCell.className = "px-2 py-1 text-xs rounded-full bg-gray-300 text-gray-700";
                 }
             }
-    
-            // Tutup menu dropdown setelah update
             toggleEmployeeMenu(index);
         })
         .catch(err => {
             console.error(err);
             alert("Failed to update employee status");
         });
-    };       
-
-    window.deleteEmployee = (index) => {
-        alert("Delete employee index: " + index);
-        // Optional: Confirm delete and send request
     };
 
-    // Set initial label
     sortLabel.textContent = getSortLabel(employeeSortType);
 });
