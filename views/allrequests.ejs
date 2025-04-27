@@ -19,9 +19,10 @@
             </button>
             <div data-sort-menu class="absolute right-0 z-20 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 hidden">
                 <div class="py-1">
-                    <button class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-sort-value="name-asc">Approve</button>
-                    <button class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-sort-value="name-desc">Pending</button>
-                    <button class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-sort-value="id">Rejected</button>
+                    <button data-sort-value="All" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-sort-value="name-asc">All</button>
+                    <button data-sort-value="Approved" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-sort-value="name-asc">Approve</button>
+                    <button data-sort-value="Pending" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-sort-value="name-desc">Pending</button>
+                    <button data-sort-value="Rejected" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-sort-value="id">Rejected</button>
                 </div>
             </div>
         </div>
@@ -139,4 +140,20 @@
     </div>
 </div>
 
-<script src="/js/allrequests.js"></script>
+<div id="reject-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-md w-96">
+        <h2 class="text-lg font-semibold mb-4">Reject Leave Request</h2>
+        <textarea id="rejection-reason" class="w-full border rounded p-2 mb-4" placeholder="Enter rejection reason..." rows="4"></textarea>
+        <div class="flex justify-end gap-2">
+            <button id="cancel-reject" class="bg-gray-300 text-gray-800 px-4 py-2 rounded">Cancel</button>
+            <button id="confirm-reject" class="bg-red-500 text-white px-4 py-2 rounded">Reject</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    window.serverLeaveRequests = <%- JSON.stringify(leaveRequests) %>;
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/allRequests.js"></script>

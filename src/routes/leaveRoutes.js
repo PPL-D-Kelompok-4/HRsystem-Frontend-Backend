@@ -7,24 +7,24 @@ import {
   updateLeaveStatus,
   deleteLeave
 } from '../controllers/leaveController.js';
-import { authenticate, isAdmin } from '../middlewares/authMiddleware.js';
+import { isAdmin } from '../middlewares/authMiddleware.js';
 import { leaveValidationRules, validate } from '../middlewares/validationMiddleware.js';
 
 const router = express.Router();
 
 // Get all leaves
-router.get('/', authenticate, isAdmin, getAllLeaves);
+router.get('/', /*authenticate,*/ isAdmin, getAllLeaves);
 
 // Get leave by ID
-router.get('/:id', authenticate, getLeaveById);
+router.get('/:id', /*authenticate,*/ getLeaveById);
 
 // Get leaves by employee ID
-router.get('/employee/:employeeId', authenticate, getLeavesByEmployeeId);
+router.get('/employee/:employeeId', /*authenticate,*/ getLeavesByEmployeeId);
 
 // Create new leave
 router.post(
   '/', 
-  authenticate, 
+  /*authenticate,*/ 
   leaveValidationRules.create, 
   validate, 
   createLeave
@@ -33,7 +33,7 @@ router.post(
 // Update leave status
 router.put(
   '/:id/status', 
-  authenticate, 
+  /*authenticate,*/ 
   isAdmin, 
   leaveValidationRules.updateStatus, 
   validate, 
@@ -41,6 +41,6 @@ router.put(
 );
 
 // Delete leave
-router.delete('/:id', authenticate, deleteLeave);
+router.delete('/:id', /*authenticate,*/ deleteLeave);
 
 export default router;
