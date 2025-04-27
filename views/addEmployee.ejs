@@ -2,26 +2,26 @@
 <div id="add-employee-view" class="p-6">
     <div class="mb-6">
         <h1 id="add-employee-title" class="text-3xl font-semibold text-gray-800">
-            Add New Employee
+            <%= mode === "edit" ? "Edit Employee" : "Add New Employee" %>
         </h1>
         <p class="text-gray-500">
-            Create a new employee record in the system.
-        </p>
+            <%= mode === "edit" ? "Update existing employee information." : "Create a new employee record in the system." %>
+        </p>        
     </div>
 
     <div class="bg-white p-6 rounded-md shadow-sm border border-gray-200">
-        <form id="addEmployeeForm" action="/addemployee" method="POST" class="space-y-6">
+        <form id="addEmployeeForm" action="<%= mode === 'edit' ? '/allemployees/edit/' + employee.id : '/addemployee' %>" method="POST" class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label for="firstName" class="block text-sm font-medium text-gray-700">First Name</label>
                     <input type="text" id="firstName" name="firstName"
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm" value="<%= employee ? employee.firstName : '' %>"
                         required />
                 </div>
                 <div>
                     <label for="lastName" class="block text-sm font-medium text-gray-700">Last Name</label>
                     <input type="text" id="lastName" name="lastName"
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm" value="<%= employee ? employee.lastName : '' %>"
                         required />
                 </div>
             </div>
@@ -30,13 +30,13 @@
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
                     <input type="email" id="email" name="email"
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm" value="<%= employee ? employee.email : '' %>"
                         required />
                 </div>
                 <div>
                     <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
                     <input type="tel" id="phone" name="phone"
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm" value="<%= employee ? employee.no_Telp : '' %>"
                         required />
                 </div>
             </div>
@@ -47,12 +47,12 @@
                     <select id="department" name="department"
                         class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 rounded-md sm:text-sm"
                         required>
-                        <option value="" selected disabled>Select a department</option>
-                        <option value="Human Resources">Human Resources</option>
-                        <option value="Finance">Finance</option>
-                        <option value="Information Technology">Information Technology</option>
-                        <option value="Marketing">Marketing</option>
-                        <option value="Operations">Operations</option>
+                        <option value="" disabled <%= employee ? '' : 'selected' %> >Select a department</option>
+                        <option value="Human Resources" <%= employee?.department === 'Human Resources' ? 'selected' : '' %> >Human Resources</option>
+                        <option value="Finance" <%= employee?.department === 'Finance' ? 'selected' : '' %> >Finance</option>
+                        <option value="Information Technology" <%= employee?.department === 'Information Technology' ? 'selected' : '' %> >Information Technology</option>
+                        <option value="Marketing" <%= employee?.department === 'Marketing' ? 'selected' : '' %> >Marketing</option>
+                        <option value="Operations" <%= employee?.department === 'Operations' ? 'selected' : '' %> >Operations</option>
                     </select>
                 </div>
                 <div>
@@ -60,11 +60,11 @@
                     <select id="position" name="position"
                         class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 rounded-md sm:text-sm"
                         required>
-                        <option value="" selected disabled>Select a position</option>
-                        <option value="Manager">Manager</option>
-                        <option value="Supervisor">Supervisor</option>
-                        <option value="Staff">Staff</option>
-                        <option value="Intern">Intern</option>
+                        <option value="" disabled <%= employee ? '' : 'selected' %> >Select a position</option>
+                        <option value="Manager" <%= employee?.position === 'Manager' ? 'selected' : '' %> >Manager</option>
+                        <option value="Supervisor" <%= employee?.position === 'Supervisor' ? 'selected' : '' %> >Supervisor</option>
+                        <option value="Staff" <%= employee?.position === 'Staff' ? 'selected' : '' %> >Staff</option>
+                        <option value="Intern" <%= employee?.position === 'Intern' ? 'selected' : '' %> >Intern</option>
                     </select>
                 </div>
             </div>
@@ -73,7 +73,7 @@
                 <div>
                     <label for="startDate" class="block text-sm font-medium text-gray-700">Start Date</label>
                     <input type="date" id="startDate" name="startDate"
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm" value="<%= employee ? employee.tanggal_Bergabung.toISOString().split('T')[0] : '' %>"
                         required />
                 </div>
                 <div></div>
@@ -83,7 +83,7 @@
                 <button type="submit"
                     id="submitEmployeeBtn"
                     class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800">
-                    Add Employee
+                    <%= mode === "edit" ? "Update Employee" : "Add Employee" %>
                 </button>
             </div>
         </form>
