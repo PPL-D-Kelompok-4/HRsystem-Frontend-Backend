@@ -1,5 +1,4 @@
 import express from "express";
-import db from "../db.js";
 
 const router = express.Router();
 
@@ -13,12 +12,12 @@ function generateRandomPassword(length = 8) {
     return password;
 }
 
-// route GET tampilkan form
+// route GET tampilkan form add
 router.get("/", (req, res) => {
     res.render("addEmployee", { mode: "add", employee: null, title: "HR System" });
 });
 
-// route POST simpan ke database
+// route POST simpan employee baru via API
 router.post("/", async (req, res) => {
     try {
         const {
@@ -34,42 +33,80 @@ router.post("/", async (req, res) => {
         const fullName = `${firstName} ${lastName}`;
         const password = generateRandomPassword();
 
-        // Cari departmentID
-        const [deptResult] = await db.query(
-            "SELECT departmentID FROM Departemen WHERE nama_Departemen = ?",
-            [department]
-        );
+        // Fetch departments
+        const deptRes = await fetch(`http://localhost:3000/api/departments`, {
+            method: "GET",
+            headers: {
+                Authorization: req.headers.authorization || "",
+            },
+        });
+        const departmentsData = await deptRes.json();
+        const departments = departmentsData.data || departmentsData;
 
-        if (deptResult.length === 0) {
+        if (!Array.isArray(departments)) {
+            console.error('Invalid departments data.');
+            return res.status(500).send("Failed to fetch departments");
+        }
+
+        const dept = departments.find(dep => dep.nama_Departemen === department);
+        const departmentID = dept?.departmentID;
+
+        if (!departmentID) {
             return res.status(400).json({ message: "Department not found" });
         }
 
-        const departmentID = deptResult[0].departmentID;
+        // Fetch positions
+        const posRes = await fetch(`http://localhost:3000/api/positions`, {
+            method: "GET",
+            headers: {
+                Authorization: req.headers.authorization || "",
+            },
+        });
+        const positionsData = await posRes.json();
+        const positions = positionsData.data || positionsData;
 
-        // Cari positionID
-        const [posResult] = await db.query(
-            "SELECT PositionID FROM Jabatan WHERE nama_Jabatan = ?",
-            [position]
-        );
+        if (!Array.isArray(positions)) {
+            console.error('Invalid positions data.');
+            return res.status(500).send("Failed to fetch positions");
+        }
 
-        if (posResult.length === 0) {
+        const pos = positions.find(p => p.nama_Jabatan === position);
+        const positionID = pos?.PositionID;
+
+        if (!positionID) {
             return res.status(400).json({ message: "Position not found" });
         }
 
-        const positionID = posResult[0].PositionID;
+        // POST ke API employees (buat employee baru)
+        const createRes = await fetch(`http://localhost:3000/api/employees`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: req.headers.authorization || "",
+            },
+            body: JSON.stringify({
+                nama: fullName,
+                email,
+                no_Telp: phone,
+                password,
+                positionID,
+                departmentID,
+                status_Karyawan: 'Aktif',
+                tanggal_Bergabung: startDate,
+            }),
+        });
 
-        // Insert employee
-        await db.query(
-            `INSERT INTO Karyawan (nama, email, no_Telp, password, positionID, departmentID, status_Karyawan, tanggal_Bergabung)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [fullName, email, phone, password, positionID, departmentID, 'Aktif', startDate]
-        );
+        const result = await createRes.json();
+
+        if (!createRes.ok) {
+            return res.status(createRes.status).json(result);
+        }
 
         res.status(200).json({ email, password });
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error", error: error.message });
+        console.error("Failed to add employee:", error.message);
+        res.status(500).json({ message: "Failed to add employee", error: error.message });
     }
 });
 

@@ -1,84 +1,104 @@
 import express from "express";
-import db from "../db.js";
 
 const router = express.Router();
 
+// All Employees Page
 router.get("/", async (req, res) => {
     try {
-        const query = `
-            SELECT 
-                Karyawan.employeeID AS id,
-                Karyawan.nama,
-                Karyawan.email,
-                Departemen.nama_Departemen AS department,
-                Jabatan.nama_Jabatan AS position,
-                Karyawan.status_Karyawan
-            FROM Karyawan
-            JOIN Jabatan ON Karyawan.positionID = Jabatan.PositionID
-            JOIN Departemen ON Karyawan.departmentID = Departemen.departmentID
-        `;
-        const [results] = await db.query(query);
+        const response = await fetch("http://localhost:3000/api/employees", {
+            method: "GET",
+            headers: {
+                Authorization: req.headers.authorization || "",
+            },
+        });
 
-        res.render("allEmployees", { employees: results, title: "HR System" });
+        const data = await response.json();
+        const apiEmployees = data || [];
+
+        const employees = apiEmployees.map((emp) => ({
+            id: emp.employeeID,
+            nama: emp.nama,
+            email: emp.email,
+            department: emp.nama_Departemen,
+            position: emp.nama_Jabatan,
+            status_Karyawan: emp.status_Karyawan,
+        }));
+
+        res.render("allEmployees", {
+            employees,
+            title: "HR System"
+        });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Database error" });
+        console.error("Failed to fetch employees:", error.message);
+        res.render("allEmployees", {
+            employees: [],
+            title: "HR System"
+        });
     }
 });
 
-router.put('/:employeeId/status', async (req, res) => {
+// Update Employee Status
+router.put("/:employeeId/status", async (req, res) => {
     try {
         const { employeeId } = req.params;
         const { status_Karyawan } = req.body;
 
-        const [result] = await db.query('UPDATE Karyawan SET status_Karyawan = ? WHERE employeeID = ?', [status_Karyawan, employeeId]);
+        const response = await fetch(`http://localhost:3000/api/employees/${employeeId}/status`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: req.headers.authorization || "",
+            },
+            body: JSON.stringify({ status_Karyawan }),
+        });
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ message: "Employee not found or no change made" });
+        const result = await response.json();
+
+        if (!response.ok) {
+            return res.status(response.status).json(result);
         }
 
         res.status(200).json({ message: 'Employee status updated successfully' });
     } catch (error) {
-        console.error('Failed to update employee status:', error);
-        res.status(500).json({ message: 'Failed to update employee status', error: error.message });
+        console.error('Failed to update employee status:', error.message);
+        res.status(500).json({ message: 'Failed to update employee status' });
     }
 });
 
-
+// Edit Employee Page
 router.get('/edit/:employeeId', async (req, res) => {
     try {
         const { employeeId } = req.params;
 
-        const [employeeResult] = await db.query(
-            `SELECT 
-                Karyawan.employeeID AS id,
-                Karyawan.nama,
-                Karyawan.email,
-                Karyawan.no_Telp,
-                Departemen.nama_Departemen AS department,
-                Jabatan.nama_Jabatan AS position,
-                Karyawan.tanggal_Bergabung
-            FROM Karyawan
-            JOIN Jabatan ON Karyawan.positionID = Jabatan.PositionID
-            JOIN Departemen ON Karyawan.departmentID = Departemen.departmentID
-            WHERE Karyawan.employeeID = ?`,
-            [employeeId]
-        );
+        const response = await fetch(`http://localhost:3000/api/employees/${employeeId}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: req.headers.authorization || "",
+            },
+        });
 
-        if (employeeResult.length === 0) {
+        if (!response.ok) {
             return res.status(404).send("Employee not found");
         }
 
-        const employee = employeeResult[0];
+        const employee = await response.json();
 
-        // Pecah nama jadi firstName dan lastName kasar (misal by spasi)
         const nameParts = employee.nama.split(' ');
         employee.firstName = nameParts[0];
         employee.lastName = nameParts.slice(1).join(' ');
 
-        res.render("addEmployee", { 
-            mode: "edit", 
-            employee 
+        // Important: Set id untuk form action
+        employee.id = employee.employeeID;
+
+        // Convert tanggal_Bergabung ke Date object
+        if (employee && employee.tanggal_Bergabung) {
+            employee.tanggal_Bergabung = new Date(employee.tanggal_Bergabung);
+        }
+
+        res.render("addEmployee", {
+            mode: "edit",
+            employee,
         });
     } catch (error) {
         console.error(error);
@@ -86,6 +106,7 @@ router.get('/edit/:employeeId', async (req, res) => {
     }
 });
 
+// Submit Edit Employee
 router.post('/edit/:employeeId', async (req, res) => {
     try {
         const { employeeId } = req.params;
@@ -93,27 +114,62 @@ router.post('/edit/:employeeId', async (req, res) => {
 
         const fullName = `${firstName} ${lastName}`;
 
-        const [deptResult] = await db.query(
-            "SELECT departmentID FROM Departemen WHERE nama_Departemen = ?",
-            [department]
-        );
+        // Fetch departmentID
+        const deptRes = await fetch(`http://localhost:3000/api/departments`, {
+            method: "GET",
+            headers: {
+                Authorization: req.headers.authorization || "",
+            },
+        });
+        const departmentsData = await deptRes.json();
+        const departments = departmentsData.data || departmentsData;
 
-        const [posResult] = await db.query(
-            "SELECT PositionID FROM Jabatan WHERE nama_Jabatan = ?",
-            [position]
-        );
+        // Fetch positionID
+        const posRes = await fetch(`http://localhost:3000/api/positions`, {
+            method: "GET",
+            headers: {
+                Authorization: req.headers.authorization || "",
+            },
+        });
+        const positionsData = await posRes.json();
+        const positions = positionsData.data || positionsData;
 
-        await db.query(
-            `UPDATE Karyawan SET 
-                nama = ?, 
-                email = ?, 
-                no_Telp = ?, 
-                positionID = ?, 
-                departmentID = ?, 
-                tanggal_Bergabung = ?
-            WHERE employeeID = ?`,
-            [fullName, email, phone, posResult[0].PositionID, deptResult[0].departmentID, startDate, employeeId]
-        );
+        // Check data
+        if (!Array.isArray(departments) || !Array.isArray(positions)) {
+            console.error('Invalid departments or positions data.');
+            return res.status(500).send("Failed to fetch departments or positions");
+        }
+
+        const dept = departments.find(dep => dep.nama_Departemen === department);
+        const departmentID = dept?.departmentID;
+
+        const pos = positions.find(p => p.nama_Jabatan === position);
+        const positionID = pos?.PositionID;
+
+        if (!departmentID || !positionID) {
+            return res.status(400).send("Invalid department or position");
+        }
+
+        const response = await fetch(`http://localhost:3000/api/employees/${employeeId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: req.headers.authorization || "",
+            },
+            body: JSON.stringify({
+                nama: fullName,
+                email,
+                no_Telp: phone,
+                departmentID,
+                positionID,
+                tanggal_Bergabung: startDate,
+            }),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            return res.status(response.status).json(errorData);
+        }
 
         res.status(200).json({ success: true });
     } catch (error) {
@@ -122,14 +178,29 @@ router.post('/edit/:employeeId', async (req, res) => {
     }
 });
 
-router.delete('/:employeeId', async (req, res) => {
+// Delete Employee
+router.delete("/:employeeId", async (req, res) => {
     try {
         const { employeeId } = req.params;
-        await db.query('DELETE FROM Karyawan WHERE employeeID = ?', [employeeId]);
-        res.json({ message: 'Employee deleted successfully' });
+
+        const response = await fetch(`http://localhost:3000/api/employees/${employeeId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: req.headers.authorization || "",
+            },
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            return res.status(response.status).json(result);
+        }
+
+        res.json({ message: "Employee deleted successfully" });
     } catch (error) {
-        console.error('Failed to delete employee:', error);
-        res.status(500).json({ message: 'Failed to delete employee' });
+        console.error("Failed to delete employee:", error.message);
+        res.status(500).json({ message: "Failed to delete employee" });
     }
 });
 
