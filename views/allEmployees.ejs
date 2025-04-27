@@ -140,7 +140,7 @@
                                     <!-- Menu Dropdown -->
                                     <div id="employeeMenu-<%= index %>" class="hidden absolute mt-8 w-48 bg-white rounded-md shadow-lg border z-20">
                                         <div class="py-1">
-                                            <button onclick="editEmployee(<%= index %>)" 
+                                            <button onclick="editEmployee('<%= employee.id %>')" 
                                                 class="block w-full text-left px-4 py-2 hover:bg-gray-100">Edit</button>
                                         
                                             <button onclick="changeEmployeeStatus(<%= index %>, '<%= employee.id %>', 'Active')" 

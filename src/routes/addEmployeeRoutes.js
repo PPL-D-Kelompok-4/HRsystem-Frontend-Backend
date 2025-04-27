@@ -15,7 +15,7 @@ function generateRandomPassword(length = 8) {
 
 // route GET tampilkan form
 router.get("/", (req, res) => {
-    res.render("addEmployee");
+    res.render("addEmployee", { mode: "add", employee: null });
 });
 
 // route POST simpan ke database
@@ -65,7 +65,7 @@ router.post("/", async (req, res) => {
             [fullName, email, phone, password, positionID, departmentID, 'Aktif', startDate]
         );
 
-        res.status(201).json({ message: "Employee added successfully" });
+        res.redirect("/allemployees?success=add");
 
     } catch (error) {
         console.error(error);

@@ -29,45 +29,42 @@ function resetForm() {
     }
 }
 
-// Simpan employee baru atau update
-function submitNewEmployee(event) {
-    event.preventDefault();
+// // Simpan employee baru atau update
+// function submitNewEmployee(event) {
+//     event.preventDefault();
 
-    const newEmployee = {
-        firstName: employeeFields.firstName.value,
-        lastName: employeeFields.lastName.value,
-        email: employeeFields.email.value,
-        phone: employeeFields.phone.value,
-        department: employeeFields.department.value,
-        position: employeeFields.position.value,
-        startDate: employeeFields.startDate.value,
-    };
+//     const newEmployee = {
+//         firstName: employeeFields.firstName.value,
+//         lastName: employeeFields.lastName.value,
+//         email: employeeFields.email.value,
+//         phone: employeeFields.phone.value,
+//         department: employeeFields.department.value,
+//         position: employeeFields.position.value,
+//         startDate: employeeFields.startDate.value,
+//     };
 
-    // Kirim data ke server
-    fetch('/addemployee', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newEmployee),
-    })
-    .then(response => {
-        if (response.ok) {
-            alert('Employee added successfully!');
-            resetForm();
-        } else {
-            alert('Failed to add employee.');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error submitting employee.');
-    });
-}
+//     // Kirim data ke server
+//     fetch('/addemployee', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(newEmployee),
+//     })
+//     .then(response => {
+//         if (response.ok) {
+//             alert('Employee added successfully!');
+//             resetForm();
+//         } else {
+//             alert('Failed to add employee.');
+//         }
+//     })
+//     .catch(error => {
+//         console.error('Error:', error);
+//         alert('Error submitting employee.');
+//     });
+// }
 
 
-// Attach event listener
-addEmployeeForm.addEventListener("submit", submitNewEmployee);
-
-// Inisialisasi saat page load
-resetForm();
+// // Attach event listener
+// addEmployeeForm.addEventListener("submit", submitNewEmployee);

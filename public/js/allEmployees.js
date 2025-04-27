@@ -39,13 +39,66 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    document.addEventListener('click', (event) => {
+        const isClickInsideMenuButton = event.target.closest("[id^='employeeMenuButton-']");
+        const isClickInsideMenu = event.target.closest("[id^='employeeMenu-']");
+        const isClickInsideSortButton = event.target.closest("#sortMenuToggle");
+        const isClickInsideSortDropdown = event.target.closest("#sortDropdown");
+    
+        if (!isClickInsideMenuButton && !isClickInsideMenu) {
+            // Kalau klik di luar employee menu, tutup semua employee menu
+            document.querySelectorAll("[id^='employeeMenu-']").forEach(menu => {
+                menu.classList.add('hidden');
+            });
+    
+            document.querySelectorAll("[id^='employeeMenuButton-']").forEach(button => {
+                button.classList.remove('z-30');
+                button.classList.add('z-10');
+            });
+        }
+    
+        if (!isClickInsideSortButton && !isClickInsideSortDropdown) {
+            // Kalau klik di luar tombol sort atau dropdown sort, tutup sort dropdown
+            sortDropdown.classList.add('hidden');
+        }
+    });
+    
+
+    document.addEventListener('click', (event) => {
+        const isClickInsideMenuButton = event.target.closest("[id^='employeeMenuButton-']");
+        const isClickInsideMenu = event.target.closest("[id^='employeeMenu-']");
+        
+        if (!isClickInsideMenuButton && !isClickInsideMenu) {
+            // Kalau klik BUKAN di tombol menu atau isi menu -> tutup semua menu
+            document.querySelectorAll("[id^='employeeMenu-']").forEach(menu => {
+                menu.classList.add('hidden');
+            });
+    
+            document.querySelectorAll("[id^='employeeMenuButton-']").forEach(button => {
+                button.classList.remove('z-30');
+                button.classList.add('z-10');
+            });
+        }
+    });
+
     // Initial load
     showPage(currentPage);
 
     // Sort Dropdown toggle
-    sortMenuToggle.addEventListener("click", () => {
+    sortMenuToggle.addEventListener("click", (event) => {        
+        // 🔥 Tambahkan ini: saat buka Sort, tutup semua menu employee
+        document.querySelectorAll("[id^='employeeMenu-']").forEach(menu => {
+            menu.classList.add('hidden');
+        });
+    
+        document.querySelectorAll("[id^='employeeMenuButton-']").forEach(button => {
+            button.classList.remove('z-30');
+            button.classList.add('z-10');
+        });
+    
         sortDropdown.classList.toggle("hidden");
     });
+    
 
     document.querySelectorAll(".sortOption").forEach(btn => {
         btn.addEventListener("click", () => {
@@ -75,6 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         rows.forEach(row => tableBody.appendChild(row)); // reorder table
+        rows = Array.from(tableBody.querySelectorAll("tr"));
     }
 
     function getSortLabel(type) {
@@ -97,17 +151,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Menu toggle
     window.toggleEmployeeMenu = (index) => {
+        // 🔥 Tambahkan ini: saat buka menu employee, tutup Sort dropdown
+        sortDropdown.classList.add('hidden');
+    
         const menu = document.getElementById(`employeeMenu-${index}`);
         const button = document.getElementById(`employeeMenuButton-${index}`);
-    
+        
         document.querySelectorAll("[id^='employeeMenu-']").forEach(m => {
             if (m !== menu) m.classList.add("hidden");
         });
         document.querySelectorAll("[id^='employeeMenuButton-']").forEach(b => {
-            b.classList.remove("z-30");
-            b.classList.add("z-10");
+            b.classList.remove('z-30');
+            b.classList.add('z-10');
         });
-
+    
         if (menu.classList.contains('hidden')) {
             menu.classList.remove('hidden');
             button.classList.remove('z-10');
@@ -118,13 +175,13 @@ document.addEventListener("DOMContentLoaded", () => {
             button.classList.add('z-10');
         }
     };
+    
 
-    window.editEmployee = (index) => {
-        const employeeId = rows[index].dataset.id;
+    window.editEmployee = (employeeId) => {
         if (employeeId) {
             window.location.href = `/allemployees/edit/${employeeId}`;
         }
-    };
+    };    
 
     window.deleteEmployee = (index) => {
         const employeeId = rows[index].dataset.id;
