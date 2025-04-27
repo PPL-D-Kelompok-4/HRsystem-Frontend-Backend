@@ -12,15 +12,15 @@ import { departmentValidationRules, validate } from '../middlewares/validationMi
 const router = express.Router();
 
 // Get all departments
-router.get('/', authenticate, getAllDepartments);
+router.get('/', /*authenticate,*/  getAllDepartments);
 
 // Get department by ID
-router.get('/:id', authenticate, getDepartmentById);
+router.get('/:id', /*authenticate,*/  getDepartmentById);
 
 // Create new department
 router.post(
   '/', 
-  authenticate, 
+  /*authenticate,*/  
   isAdmin, 
   departmentValidationRules.create, 
   validate, 
@@ -30,7 +30,7 @@ router.post(
 // Update department
 router.put(
   '/:id', 
-  authenticate, 
+  /*authenticate,*/ 
   isAdmin, 
   departmentValidationRules.update, 
   validate, 
@@ -38,6 +38,6 @@ router.put(
 );
 
 // Delete department
-router.delete('/:id', authenticate, isAdmin, deleteDepartment);
+router.delete('/:id', /*authenticate,*/  isAdmin, deleteDepartment);
 
 export default router;

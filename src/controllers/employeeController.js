@@ -1,5 +1,4 @@
 import pool from '../config/database.js';
-import bcrypt from 'bcrypt';
 
 // Get all employees
 export const getAllEmployees = async (req, res) => {
@@ -77,10 +76,6 @@ export const createEmployee = async (req, res) => {
       return res.status(400).json({ message: 'Email already in use' });
     }
     
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    
     // Set default values
     const status = status_Karyawan || 'Aktif';
     const joinDate = tanggal_Bergabung || new Date().toISOString().split('T')[0];
@@ -89,7 +84,7 @@ export const createEmployee = async (req, res) => {
       `INSERT INTO Karyawan (
         nama, email, no_Telp, password, positionID, departmentID, status_Karyawan, tanggal_Bergabung
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [nama, email, no_Telp, hashedPassword, positionID, departmentID, status, joinDate]
+      [nama, email, no_Telp, password, positionID, departmentID, status, joinDate]
     );
     
     res.status(201).json({ 
@@ -101,6 +96,33 @@ export const createEmployee = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+// Update employee status only
+export const updateEmployeeStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status_Karyawan } = req.body;
+
+    if (!status_Karyawan) {
+      return res.status(400).json({ message: 'Status is required' });
+    }
+
+    const [result] = await pool.query(
+      'UPDATE Karyawan SET status_Karyawan = ? WHERE employeeID = ?',
+      [status_Karyawan, id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Employee not found or status not updated' });
+    }
+
+    res.json({ message: 'Employee status updated successfully' });
+  } catch (error) {
+    console.error('Error updating employee status:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 
 // Update employee
 export const updateEmployee = async (req, res) => {
@@ -142,11 +164,6 @@ export const updateEmployee = async (req, res) => {
       tanggal_Bergabung: tanggal_Bergabung || employee[0].tanggal_Bergabung
     };
     
-    // If password is provided, hash it
-    if (password) {
-      const salt = await bcrypt.genSalt(10);
-      updateData.password = await bcrypt.hash(password, salt);
-    }
     
     // Build query dynamically
     const fields = Object.keys(updateData)
@@ -176,29 +193,34 @@ export const updateEmployee = async (req, res) => {
 export const deleteEmployee = async (req, res) => {
   try {
     const { id } = req.params;
-    
-    // Check if employee exists
+
     const [employee] = await pool.query('SELECT * FROM Karyawan WHERE employeeID = ?', [id]);
     if (employee.length === 0) {
       return res.status(404).json({ message: 'Employee not found' });
     }
-    
-    // Check for related records
+
     const [attendances] = await pool.query('SELECT COUNT(*) as count FROM Kehadiran WHERE employeeID = ?', [id]);
-    const [leaves] = await pool.query('SELECT COUNT(*) as count FROM Cuti WHERE employeeID = ?', [id]);
+
+    // Handle 'Cuti' table missing
+    let leavesCount = 0;
+    try {
+      const [leaves] = await pool.query('SELECT COUNT(*) as count FROM Cuti WHERE employeeID = ?', [id]);
+      leavesCount = leaves[0].count;
+    } catch (error) {
+      console.warn('Warning: Failed to check leaves:', error.message);
+    }
+
     const [payrolls] = await pool.query('SELECT COUNT(*) as count FROM Gaji WHERE employeeID = ?', [id]);
-    
-    if (attendances[0].count > 0 || leaves[0].count > 0 || payrolls[0].count > 0) {
-      // Instead of deleting, set status to 'Non-Aktif'
+
+    if (attendances[0].count > 0 || leavesCount > 0 || payrolls[0].count > 0) {
       await pool.query('UPDATE Karyawan SET status_Karyawan = ? WHERE employeeID = ?', ['Non-Aktif', id]);
       return res.json({ 
         message: 'Employee has related records. Status changed to Non-Aktif instead of deletion.' 
       });
     }
-    
-    // If no related records, proceed with deletion
+
     const [result] = await pool.query('DELETE FROM Karyawan WHERE employeeID = ?', [id]);
-    
+
     res.json({ message: 'Employee deleted successfully' });
   } catch (error) {
     console.error('Error deleting employee:', error);

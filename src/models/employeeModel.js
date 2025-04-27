@@ -39,10 +39,6 @@ export const create = async (employeeData) => {
     tanggal_Bergabung
   } = employeeData;
   
-  // Hash password
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-  
   // Set default values
   const status = status_Karyawan || 'Aktif';
   const joinDate = tanggal_Bergabung || new Date().toISOString().split('T')[0];
@@ -51,7 +47,7 @@ export const create = async (employeeData) => {
     `INSERT INTO Karyawan (
       nama, email, no_Telp, password, positionID, departmentID, status_Karyawan, tanggal_Bergabung
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [nama, email, no_Telp, hashedPassword, positionID, departmentID, status, joinDate]
+    [nama, email, no_Telp, password, positionID, departmentID, status, joinDate]
   );
   
   return result.insertId;
@@ -83,12 +79,6 @@ export const update = async (id, employeeData) => {
     status_Karyawan: status_Karyawan || employee[0].status_Karyawan,
     tanggal_Bergabung: tanggal_Bergabung || employee[0].tanggal_Bergabung
   };
-  
-  // If password is provided, hash it
-  if (password) {
-    const salt = await bcrypt.genSalt(10);
-    updateData.password = await bcrypt.hash(password, salt);
-  }
   
   // Build query dynamically
   const fields = Object.keys(updateData)
@@ -136,12 +126,11 @@ export const verifyPassword = async (user, password) => {
 };
 
 export const changePassword = async (id, newPassword) => {
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(newPassword, salt);
+  
   
   const [result] = await pool.query(
     'UPDATE Karyawan SET password = ? WHERE employeeID = ?',
-    [hashedPassword, id]
+    [newPassword, id]
   );
   
   return result.affectedRows > 0;
