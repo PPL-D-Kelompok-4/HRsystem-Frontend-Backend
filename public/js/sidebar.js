@@ -1,31 +1,40 @@
-const leaveToggleBtn = document.getElementById('leave-toggle');
-const leaveSubmenu = document.getElementById('leave-submenu');
+const leaveToggleBtn = document.getElementById("leave-toggle");
+const leaveSubmenu = document.getElementById("leave-submenu");
 
-leaveToggleBtn.addEventListener('click', () => {
-    leaveSubmenu.classList.toggle('hidden');
+leaveToggleBtn.addEventListener("click", () => {
+	leaveSubmenu.classList.toggle("hidden");
 });
 
-const employeeToggleBtn = document.getElementById('employee-toggle');
-const employeeSubmenu = document.getElementById('employee-submenu');
+const employeeToggleBtn = document.getElementById("employee-toggle");
+const employeeSubmenu = document.getElementById("employee-submenu");
 
-employeeToggleBtn.addEventListener('click', () => {
-    employeeSubmenu.classList.toggle('hidden');
+employeeToggleBtn.addEventListener("click", () => {
+	employeeSubmenu.classList.toggle("hidden");
 });
 
-const userProfile = {
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@company.com",
-    phone: "(123) 456-7890",
-    dateOfBirth: "1990-01-01",
-    department: "Engineering",
-    position: "Senior Developer",
-    address: {
-        street: "123 Main St",
-        city: "San Francisco",
-        state: "CA",
-        zipCode: "94105",
-        country: "USA",
-    },
-    emergencyContact: "Jane Doe (Wife) - (123) 456-7891",
-};
+document.addEventListener("DOMContentLoaded", async () => {
+	const userNameElement = document.getElementById("user-name");
+
+	try {
+		const response = await fetch("http://localhost:3000/api/auth/me", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		});
+
+		if (!response.ok) {
+			const error = await response.json();
+			throw new Error(error.message || "Gagal mendapatkan user info");
+		}
+
+		const user = await response.json();
+
+		// Update nama di sidebar
+		userNameElement.textContent = user.nama || "Unknown User";
+	} catch (error) {
+		console.error("Error fetching user:", error.message);
+		window.location.href = "/login"; // Kalau gagal, redirect login
+	}
+});

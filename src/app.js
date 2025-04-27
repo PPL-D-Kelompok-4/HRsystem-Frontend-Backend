@@ -5,13 +5,11 @@ import helmet from "helmet";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import path from "path";
-import {
-	fileURLToPath
-} from "url";
+import { fileURLToPath } from "url";
+import cookieParser from "cookie-parser";
 
 // get __dirname in ES Modules
-const __filename = fileURLToPath(
-	import.meta.url);
+const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Load environment variables
@@ -30,6 +28,8 @@ import dashboardRoutes from "./routes/dashboardRoutes.js";
 import allEmployeesRoutes from "./routes/allEmployeesRoutes.js";
 import addEmployeeRoutes from "./routes/addEmployeeRoutes.js";
 import calendarRoutes from "./routes/calendarRoutes.js";
+import loginRoutes from "./routes/loginRoutes.js";
+import profileRoutes from "./routes/profileRoutes.js";
 import allRequestsRoutes from "./routes/allRequestsRoutes.js";
 
 // Create Express app
@@ -42,13 +42,18 @@ app.set("views", path.join(__dirname, "../views"));
 
 // Middleware
 app.use(cors());
-app.use(helmet({
-	contentSecurityPolicy: false
-}));
+app.use(
+	helmet({
+		contentSecurityPolicy: false,
+	})
+);
 app.use(express.json());
-app.use(express.urlencoded({
-	extended: true
-}));
+app.use(
+	express.urlencoded({
+		extended: true,
+	})
+);
+app.use(cookieParser());
 
 // Serve static files from "public"
 app.use(express.static(path.join(__dirname, "../public")));
@@ -74,18 +79,12 @@ app.use("/allrequests", allRequestsRoutes);
 app.use("/allemployees", allEmployeesRoutes);
 app.use("/addemployee", addEmployeeRoutes);
 app.use("/calendar", calendarRoutes);
+app.use("/", loginRoutes);
+app.use("/", profileRoutes);
 
 app.get("/attendance", (req, res) => {
 	res.render("attendance");
 });
-
-app.get('/login', (req, res) => {
-	res.render('login', {
-		title: 'Login | HR System',
-		showSidebar: false
-	});
-});
-
 
 app.get("/newrequests", (req, res) => {
 	res.render("newrequests");
@@ -107,14 +106,14 @@ app.get("/reports", (req, res) => {
 // 	res.render("addEmployee");
 // });
 
-app.get("/profile", (req, res) => {
-	res.render("profile");
-});
+// app.get("/profile", (req, res) => {
+// 	res.render("profile");
+// });
 
 // 404 handler
 app.use((req, res, next) => {
 	res.status(404).json({
-		message: "Route not found"
+		message: "Route not found",
 	});
 });
 
@@ -123,7 +122,7 @@ app.use((err, req, res, next) => {
 	console.error(err.stack);
 	res.status(500).json({
 		message: "Server error",
-		error: err.message
+		error: err.message,
 	});
 });
 
