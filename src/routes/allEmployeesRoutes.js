@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
         `;
         const [results] = await db.query(query);
 
-        res.render("allEmployees", { employees: results });
+        res.render("allEmployees", { employees: results, title: "HR System" });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Database error" });

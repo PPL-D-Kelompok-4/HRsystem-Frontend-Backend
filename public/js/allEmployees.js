@@ -25,19 +25,31 @@ document.addEventListener("DOMContentLoaded", () => {
         employeeCountText.textContent = `Showing ${Math.min(start + 1, rows.length)} - ${Math.min(end, rows.length)} of ${rows.length} employees`;
     }
 
+    function updateButtonStates() {
+        prevPageBtn.disabled = currentPage <= 1;
+        prevPageBtn.classList.toggle('opacity-50', currentPage <= 1);
+        prevPageBtn.classList.toggle('cursor-not-allowed', currentPage <= 1);
+    
+        nextPageBtn.disabled = currentPage * rowsPerPage >= rows.length;
+        nextPageBtn.classList.toggle('opacity-50', currentPage * rowsPerPage >= rows.length);
+        nextPageBtn.classList.toggle('cursor-not-allowed', currentPage * rowsPerPage >= rows.length);
+    }    
+
     prevPageBtn.addEventListener("click", () => {
         if (currentPage > 1) {
             currentPage--;
             showPage(currentPage);
+            updateButtonStates();
         }
     });
-
+    
     nextPageBtn.addEventListener("click", () => {
         if (currentPage * rowsPerPage < rows.length) {
             currentPage++;
             showPage(currentPage);
+            updateButtonStates();
         }
-    });
+    }); 
 
     document.addEventListener('click', (event) => {
         const isClickInsideMenuButton = event.target.closest("[id^='employeeMenuButton-']");
@@ -83,6 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Initial load
     showPage(currentPage);
+    updateButtonStates();
 
     // Sort Dropdown toggle
     sortMenuToggle.addEventListener("click", (event) => {        
