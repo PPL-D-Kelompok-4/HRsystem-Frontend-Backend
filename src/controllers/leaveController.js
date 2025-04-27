@@ -2,19 +2,37 @@ import pool from "../config/database.js";
 
 // Get all leaves
 export const getAllLeaves = async (req, res) => {
-	try {
+		try {
 		const [rows] = await pool.query(`
-      SELECT c.*, k.nama as employee_name
-      FROM Cuti c
-      JOIN Karyawan k ON c.employeeID = k.employeeID
-      ORDER BY c.tanggal_Pengajuan DESC
-    `);
+			SELECT 
+			c.leaveID AS id,
+			k.nama AS employee,
+			DATE_FORMAT(c.tanggal_Mulai, '%Y-%m-%d') AS startDate,
+			DATE_FORMAT(c.tanggal_Selesai, '%Y-%m-%d') AS endDate,
+			DATEDIFF(c.tanggal_Selesai, c.tanggal_Mulai) + 1 AS days,
+			c.keterangan_Cuti AS reason,
+			CASE
+				WHEN c.keterangan_Cuti LIKE '%Sakit%' THEN 'Sick'
+				WHEN c.keterangan_Cuti LIKE '%Ijin%' THEN 'Personal'
+				ELSE 'Annual'
+			END AS type,
+			c.status,
+			k.email AS contactInfo,
+			'' AS rejectionReason
+			FROM 
+			Cuti c
+			JOIN 
+			Karyawan k ON c.employeeID = k.employeeID
+			ORDER BY 
+			c.tanggal_Pengajuan DESC
+		`);
+	
 		res.json(rows);
-	} catch (error) {
+		} catch (error) {
 		console.error("Error fetching leaves:", error);
 		res.status(500).json({ message: "Server error" });
-	}
-};
+		}
+	};  
 
 // Get leave by ID
 export const getLeaveById = async (req, res) => {

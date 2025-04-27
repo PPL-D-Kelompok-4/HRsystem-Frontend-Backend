@@ -99,20 +99,52 @@ INSERT INTO Karyawan (
   departmentID, 
   status_Karyawan, 
   tanggal_Bergabung
-) VALUES (
+) VALUES 
+(
   'Admin User',
   'admin@example.com',
   '081234567890',
-  'admin123', -- hashed 'admin123'
+  'admin123', -- seharusnya hashed, tapi contoh saja
   1, -- Manager position
   1, -- HR department
   'Aktif',
   '2023-01-01'
+),
+(
+  'User Dua',
+  'user2@example.com',
+  '081234567891',
+  'user2123', -- contoh password
+  2, -- Supervisor position
+  2, -- Finance department
+  'Aktif',
+  '2023-02-01'
+),
+(
+  'User Tiga',
+  'user3@example.com',
+  '081234567892',
+  'user3123', -- contoh password
+  3, -- Staff position
+  3, -- IT department
+  'Aktif',
+  '2023-03-01'
+),
+(
+  'User Empat',
+  'user4@example.com',
+  '081234567893',
+  'user4123', -- contoh password
+  4, -- Intern position
+  4, -- Marketing department
+  'Aktif',
+  '2023-04-01'
 );
+
 
 -- Insert sample data for Cuti
 INSERT INTO Cuti (employeeID, tanggal_Pengajuan, tanggal_Mulai, tanggal_Selesai, keterangan_Cuti, status) VALUES
 (1, '2023-01-01', '2023-01-05', '2023-01-10', 'Cuti Sakit', 'Disetujui'),
-(2, '2023-01-10', '2023-01-15', '2023-01-20', 'Cuti Ijin', 'Diajukan');
-(3, '2023-01-15', '2023-01-20', '2023-01-25', 'Cuti Sakit', 'Ditolak');
+(2, '2023-01-10', '2023-01-15', '2023-01-20', 'Cuti Ijin', 'Diajukan'),
+(3, '2023-01-15', '2023-01-20', '2023-01-25', 'Cuti Sakit', 'Ditolak'),
 (4, '2023-01-20', '2023-01-25', '2023-01-30', 'Cuti Ijin', 'Disetujui');
