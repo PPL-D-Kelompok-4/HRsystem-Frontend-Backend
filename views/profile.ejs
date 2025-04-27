@@ -1,13 +1,11 @@
 <!-- Profile View -->
 <div id="profile-view" class="p-6">
     <div class="mb-6">
-        <h1 class="text-3xl font-semibold text-gray-800">
-            Personal Information
-        </h1>
+        <h1 class="text-3xl font-semibold text-gray-800">Personal Information</h1>
         <p class="text-gray-500">Your basic personal details</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
         <!-- Personal Information Card -->
         <div class="bg-white p-6 rounded-md shadow-sm border border-gray-200" id="profile-card">
             <div class="flex items-center mb-6">
@@ -38,42 +36,39 @@
                         <div class="flex-1 p-2 bg-gray-50 border border-gray-300 rounded-r-md" id="profile-email"></div>
                     </div>
                 </div>
+
                 <div>
-                    <label for="editPassword1" class="block text-sm font-medium text-gray-700">Password</label>
-                    <div class="mt-1 flex rounded-md shadow-sm">
-                        <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                        </span>
-                        <input type="password" id="editPassword1" readonly value="inipassword123" class="block w-full px-3 py-2 border border-gray-300 rounded-none rounded-r-md shadow-sm sm:text-sm" />
+                    <label class="block text-sm font-medium text-gray-700">Password</label>
+                    <div class="mt-1 flex">
+                      <!-- Button toggle -->
+                      <button type="button" id="togglePasswordView" class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 focus:outline-none">
+                        <svg id="eyeIconView" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path id="eyePathView" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z 
+                               M2.458 12C3.732 7.943 7.523 5 12 5 
+                               c4.478 0 8.268 2.943 9.542 7 
+                               -1.274 4.057-5.064 7-9.542 7 
+                               -4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                      </button>
+                  
+                      <!-- Tempat nampilin password -->
+                      <div id="profile-password" class="flex-1 p-2 bg-gray-50 border border-gray-300 rounded-r-md select-text overflow-hidden whitespace-nowrap text-ellipsis">
+                        ********
+                      </div>
                     </div>
-                </div>
-                
+                  </div>
+                  
+
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Phone Number</label>
                     <div class="mt-1 flex">
                         <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500">
-                            <!-- Phone Icon -->
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                             </svg>
                         </span>
                         <div class="flex-1 p-2 bg-gray-50 border border-gray-300 rounded-r-md" id="profile-phone"></div>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Date of Birth</label>
-                    <div class="mt-1 flex">
-                        <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500">
-                            <!-- Calendar Icon -->
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
-                            </svg>
-                        </span>
-                        <div class="flex-1 p-2 bg-gray-50 border border-gray-300 rounded-r-md" id="profile-dob"></div>
                     </div>
                 </div>
             </div>
@@ -98,45 +93,38 @@
                         <input type="email" id="editEmail" class="block w-full px-3 py-2 border border-gray-300 rounded-none rounded-r-md shadow-sm sm:text-sm" />
                     </div>
                 </div>
-
+                
                 <div>
-                    <label for="editPassword2" class="block text-sm font-medium text-gray-700">Password</label>
-                    <div class="mt-1 flex rounded-md shadow-sm">
-                        <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                        </span>
-                        <input type="password" id="editPassword2" value="inipassword123" class="block w-full px-3 py-2 border border-gray-300 rounded-none rounded-r-md shadow-sm sm:text-sm" />
+                    <label for="editPassword" class="block text-sm font-medium text-gray-700">Password</label>
+                    <div class="mt-1 flex rounded-md shadow-sm relative">
+                      <button type="button" id="togglePassword" class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 focus:outline-none">
+                        <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path id="eyePath" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z 
+                               M2.458 12C3.732 7.943 7.523 5 12 5 
+                               c4.478 0 8.268 2.943 9.542 7 
+                               -1.274 4.057-5.064 7-9.542 7 
+                               -4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                      </button>
+                  
+                      <input type="password" id="editPassword" class="flex-1 min-w-0 block w-full px-3 py-2 border border-gray-300 rounded-none rounded-r-md shadow-sm sm:text-sm" />
                     </div>
-                </div>
+                  </div>
+                  
 
+                                        
                 <div>
                     <label for="editPhone" class="block text-sm font-medium text-gray-700">Phone Number</label>
                     <div class="mt-1 flex rounded-md shadow-sm">
                         <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500">
-                            <!-- Phone Icon -->
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                             </svg>
                         </span>
-                        <input type="tel" id="editPhone" class="block w-full px-3 py-2 border border-gray-300 rounded-none rounded-r-md shadow-sm sm:text-sm" />
+                        <input type="tel" id="editPhone" class="flex-1 min-w-0 block w-full px-3 py-2 border border-gray-300 rounded-none rounded-r-md shadow-sm sm:text-sm" />
                     </div>
-                </div>
-
-                <div>
-                    <label for="editDateOfBirth" class="block text-sm font-medium text-gray-700">Date of Birth</label>
-                    <div class="mt-1 flex rounded-md shadow-sm">
-                        <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500">
-                            <!-- Calendar Icon -->
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
-                            </svg>
-                        </span>
-                        <input type="text" id="editDateOfBirth" class="block w-full px-3 py-2 border border-gray-300 rounded-none rounded-r-md shadow-sm sm:text-sm" />
-                    </div>
-                </div>
+                </div>                
 
                 <div class="flex justify-end space-x-3">
                     <button type="button" id="cancelEditBtn" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</button>
@@ -145,97 +133,7 @@
             </div>
 
             <div class="flex justify-end" id="profile-edit-toggle">
-                <button id="editProfileBtn" class="mt-5 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800">
-                    Edit
-                </button>
-            </div>
-        </div>
-
-
-        <!-- Contact & Address Card -->
-        <div class="bg-white p-6 rounded-md shadow-sm border border-gray-200" id="address-card">
-            <div class="flex justify-between items-center mb-4">
-                <div>
-                    <h2 class="text-xl font-semibold mb-1">Contact & Address</h2>
-                    <p class="text-gray-500">Your contact information and address</p>
-                </div>
-            </div>
-
-            <!-- View Mode -->
-            <div class="space-y-6" id="address-view-mode">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Street Address</label>
-                    <div class="mt-1 flex">
-                        <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
-                            </svg>
-                        </span>
-                        <div class="flex-1 p-2 bg-gray-50 border border-gray-300 rounded-r-md" id="profile-street"></div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">City</label>
-                        <div class="mt-1 p-2 bg-gray-50 border border-gray-300 rounded-md" id="profile-city"></div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">State</label>
-                        <div class="mt-1 p-2 bg-gray-50 border border-gray-300 rounded-md" id="profile-state"></div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">ZIP Code</label>
-                        <div class="mt-1 p-2 bg-gray-50 border border-gray-300 rounded-md" id="profile-zip"></div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Country</label>
-                        <div class="mt-1 p-2 bg-gray-50 border border-gray-300 rounded-md" id="profile-country"></div>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Emergency Contact</label>
-                    <div class="mt-1 p-2 bg-gray-50 border border-gray-300 rounded-md" id="profile-emergency"></div>
-                </div>
-            </div>
-
-            <!-- Edit Mode -->
-            <div class="space-y-6 hidden" id="address-edit-mode">
-                <div>
-                    <label for="editStreet" class="block text-sm font-medium text-gray-700">Street Address</label>
-                    <input type="text" id="editStreet" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm" />
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label for="editCity" class="block text-sm font-medium text-gray-700">City</label>
-                        <input type="text" id="editCity" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm" />
-                    </div>
-                    <div>
-                        <label for="editState" class="block text-sm font-medium text-gray-700">State</label>
-                        <input type="text" id="editState" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm" />
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label for="editZipCode" class="block text-sm font-medium text-gray-700">ZIP Code</label>
-                        <input type="text" id="editZipCode" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm" />
-                    </div>
-                    <div>
-                        <label for="editCountry" class="block text-sm font-medium text-gray-700">Country</label>
-                        <input type="text" id="editCountry" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm" />
-                    </div>
-                </div>
-
-                <div>
-                    <label for="editEmergencyContact" class="block text-sm font-medium text-gray-700">Emergency Contact</label>
-                    <input type="text" id="editEmergencyContact" placeholder="Name (Relationship) - Phone Number" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm" />
-                </div>
+                <button id="editProfileBtn" class="mt-5 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800">Edit</button>
             </div>
         </div>
     </div>
