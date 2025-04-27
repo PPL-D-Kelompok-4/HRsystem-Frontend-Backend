@@ -12,15 +12,12 @@
 <body class="min-h-screen flex flex-col bg-gray-100">
     <div class="flex flex-1">
         <% if (typeof showSidebar === 'undefined' || showSidebar) { %>
-        <%- include('partials/sidebar') %>
+            <%- include('partials/sidebar') %>
         <% } %>
-
         <div class="flex-1 overflow-auto ml-64">
             <%- body %>
-          </div>          
+        </div>          
     </div>
     <script src="/js/sidebar.js" defer></script>
 </body>
-
-
 </html>
