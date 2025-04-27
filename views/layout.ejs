@@ -9,16 +9,18 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body class="flex bg-gray-100">
-    <!-- Sidebar -->
-    <%- include('partials/sidebar') %>
+<body class="min-h-screen flex flex-col bg-gray-100">
+    <div class="flex flex-1">
+        <% if (typeof showSidebar === 'undefined' || showSidebar) { %>
+        <%- include('partials/sidebar') %>
+        <% } %>
 
-    <!-- Main Content -->
-    <div class="flex-1 overflow-auto">
-        <%- body %>
+        <div class="flex-1 overflow-auto">
+            <%- body %>
+        </div>
     </div>
-
     <script src="/js/sidebar.js" defer></script>
 </body>
+
 
 </html>
