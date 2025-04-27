@@ -65,7 +65,7 @@ router.post("/", async (req, res) => {
             [fullName, email, phone, password, positionID, departmentID, 'Aktif', startDate]
         );
 
-        res.redirect("/allemployees?success=add");
+        res.status(200).json({ email, password });
 
     } catch (error) {
         console.error(error);
