@@ -15,7 +15,7 @@ function generateRandomPassword(length = 8) {
 
 // route GET tampilkan form
 router.get("/", (req, res) => {
-    res.render("addEmployee", { mode: "add", employee: null });
+    res.render("addEmployee", { mode: "add", employee: null, title: "HR System" });
 });
 
 // route POST simpan ke database
