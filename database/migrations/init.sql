@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS Cuti (
   keterangan_Cuti VARCHAR(100),
   status ENUM('Diajukan', 'Disetujui', 'Ditolak') NOT NULL DEFAULT 'Diajukan',
   rejectionReason VARCHAR(255) DEFAULT '-',
-  leaveType ENUM('Annual Leave', 'Sick Leave', 'Personal Leave',) DEFAULT 'Annual Leave',
+  leaveType ENUM('Annual Leave', 'Sick Leave', 'Personal Leave') DEFAULT 'Annual Leave',
   PRIMARY KEY (leaveID),
   FOREIGN KEY (employeeID) REFERENCES Karyawan(employeeID)
 );
@@ -102,51 +102,51 @@ INSERT INTO Karyawan (
   status_Karyawan, 
   tanggal_Bergabung
 ) VALUES 
-(
-  'Admin User',
-  'admin@example.com',
-  '081234567890',
-  'admin123', -- seharusnya hashed, tapi contoh saja
-  1, -- Manager position
-  1, -- HR department
-  'Aktif',
-  '2023-01-01'
-),
-(
-  'User Dua',
-  'user2@example.com',
-  '081234567891',
-  'user2123', -- contoh password
-  2, -- Supervisor position
-  2, -- Finance department
-  'Aktif',
-  '2023-02-01'
-),
-(
-  'User Tiga',
-  'user3@example.com',
-  '081234567892',
-  'user3123', -- contoh password
-  3, -- Staff position
-  3, -- IT department
-  'Aktif',
-  '2023-03-01'
-),
-(
-  'User Empat',
-  'user4@example.com',
-  '081234567893',
-  'user4123', -- contoh password
-  4, -- Intern position
-  4, -- Marketing department
-  'Aktif',
-  '2023-04-01'
-);
+('Admin User','admin@example.com','081234567890','admin123', 1, 1,'Aktif','2023-01-01'),
+('Budi Santoso', 'budi.santoso@example.com', '082509617097', 'password123', 3, 3, 'Cuti', '2022-12-17'),
+('Siti Aminah', 'siti.aminah@example.com', '083923448990', 'password123', 2, 1, 'Cuti', '2020-05-29'),
+('Agus Salim', 'agus.salim@example.com', '081445912336', 'password123', 3, 3, 'Inaktif', '2022-02-10'),
+('Dewi Lestari', 'dewi.lestari@example.com', '089532900546', 'password123', 3, 3, 'Inaktif', '2020-10-02'),
+('Rizky Pratama', 'rizky.pratama@example.com', '082272527614', 'password123', 3, 2, 'Cuti', '2022-04-13'),
+('Fitri Handayani', 'fitri.handayani@example.com', '087748122060', 'password123', 3, 1, 'Aktif', '2022-01-05'),
+('Andi Wijaya', 'andi.wijaya@example.com', '088502600355', 'password123', 1, 2, 'Inaktif', '2019-02-05'),
+('Nurul Huda', 'nurul.huda@example.com', '085638099177', 'password123', 1, 3, 'Cuti', '2021-06-22'),
+('Dimas Saputra', 'dimas.saputra@example.com', '086307885021', 'password123', 3, 1, 'Cuti', '2022-06-08'),
+('Linda Sari', 'linda.sari@example.com', '083730477043', 'password123', 3, 2, 'Aktif', '2023-04-29'),
+('Rina Kartika', 'rina.kartika@example.com', '087880718446', 'password123', 3, 3, 'Cuti', '2023-07-20'),
+('Taufik Hidayat', 'taufik.hidayat@example.com', '089199405301', 'password123', 3, 1, 'Inaktif', '2019-04-18'),
+('Mega Sari', 'mega.sari@example.com', '082915727163', 'password123', 1, 1, 'Aktif', '2024-02-25'),
+('Adi Putra', 'adi.putra@example.com', '088059754864', 'password123', 2, 2, 'Cuti', '2021-04-08'),
+('Melati Ayu', 'melati.ayu@example.com', '088216728783', 'password123', 1, 3, 'Inaktif', '2023-04-28'),
+('Hendra Gunawan', 'hendra.gunawan@example.com', '089084872437', 'password123', 3, 3, 'Aktif', '2021-02-03'),
+('Sarah Azzahra', 'sarah.azzahra@example.com', '080352230278', 'password123', 2, 1, 'Inaktif', '2024-12-20'),
+('Rama Dwi', 'rama.dwi@example.com', '088208109009', 'password123', 1, 2, 'Inaktif', '2020-09-10'),
+('Vina Andriani', 'vina.andriani@example.com', '082472430736', 'password123', 2, 1, 'Aktif', '2021-02-02'),
+('Galih Candra', 'galih.candra@example.com', '087712178183', 'password123', 2, 2, 'Aktif', '2022-10-03');
 
 -- Insert sample data for Cuti
-INSERT INTO Cuti (employeeID, tanggal_Pengajuan, tanggal_Mulai, tanggal_Selesai, keterangan_Cuti, status, rejectionReason, leaveType) VALUES
-(1, '2023-01-01', '2023-01-05', '2023-01-10', 'Cuti Sakit', 'Disetujui', '-', 'Sick Leave'),
-(2, '2023-01-10', '2023-01-15', '2023-01-20', 'Cuti Ijin', 'Diajukan', '-', 'Personal Leave'),
-(3, '2023-01-15', '2023-01-20', '2023-01-25', 'Cuti Sakit', 'Ditolak', 'Kurang dokumen pendukung', 'Sick Leave'),
-(4, '2023-01-20', '2023-01-25', '2023-01-30', 'Cuti Ijin', 'Disetujui', '-', 'Personal Leave');
+INSERT INTO Cuti (employeeID, tanggal_Pengajuan, tanggal_Mulai, tanggal_Selesai, keterangan_Cuti, status, rejectionReason, leaveType) 
+VALUES
+(1, '2025-04-10', '2025-05-01', '2025-05-03', 'Liburan keluarga', 'Diajukan', '-', 'Annual Leave'),
+(1, '2025-04-15', '2025-06-10', '2025-06-12', 'Pernikahan saudara', 'Diajukan', '-', 'Personal Leave'),
+(2, '2025-04-12', '2025-05-05', '2025-05-06', 'Sakit flu berat', 'Diajukan', '-', 'Sick Leave'),
+(2, '2025-04-20', '2025-07-01', '2025-07-05', 'Cuti tahunan', 'Diajukan', '-', 'Annual Leave'),
+(3, '2025-04-14', '2025-05-07', '2025-05-09', 'Acara keluarga', 'Diajukan', '-', 'Personal Leave'),
+(4, '2025-04-18', '2025-05-15', '2025-05-17', 'Liburan ke luar kota', 'Diajukan', '-', 'Annual Leave'),
+(4, '2025-04-25', '2025-06-20', '2025-06-22', 'Menghadiri seminar', 'Diajukan', '-', 'Personal Leave'),
+(5, '2025-04-22', '2025-05-18', '2025-05-20', 'Rawat inap', 'Diajukan', '-', 'Sick Leave'),
+(6, '2025-04-08', '2025-05-02', '2025-05-04', 'Kondisi kesehatan', 'Diajukan', '-', 'Sick Leave'),
+(6, '2025-04-28', '2025-06-05', '2025-06-07', 'Urusan keluarga', 'Diajukan', '-', 'Personal Leave'),
+(7, '2025-04-09', '2025-05-10', '2025-05-12', 'Liburan pribadi', 'Diajukan', '-', 'Annual Leave'),
+(8, '2025-04-11', '2025-05-15', '2025-05-17', 'Pemulihan kesehatan', 'Diajukan', '-', 'Sick Leave'),
+(8, '2025-04-30', '2025-07-01', '2025-07-03', 'Acara keluarga', 'Diajukan', '-', 'Personal Leave'),
+(9, '2025-04-17', '2025-06-01', '2025-06-03', 'Mudik lebaran', 'Diajukan', '-', 'Annual Leave'),
+(10, '2025-04-21', '2025-06-15', '2025-06-17', 'Checkup medis', 'Diajukan', '-', 'Sick Leave'),
+(10, '2025-04-23', '2025-07-10', '2025-07-12', 'Cuti tahunan', 'Diajukan', '-', 'Annual Leave'),
+(11, '2025-04-19', '2025-05-25', '2025-05-27', 'Pernikahan sahabat', 'Diajukan', '-', 'Personal Leave'),
+(12, '2025-04-13', '2025-05-20', '2025-05-22', 'Liburan keluarga', 'Diajukan', '-', 'Annual Leave'),
+(13, '2025-04-16', '2025-05-30', '2025-06-01', 'Sakit berat', 'Diajukan', '-', 'Sick Leave'),
+(14, '2025-04-24', '2025-06-05', '2025-06-06', 'Menghadiri acara keluarga', 'Diajukan', '-', 'Personal Leave'),
+(15, '2025-04-27', '2025-06-10', '2025-06-12', 'Liburan luar kota', 'Diajukan', '-', 'Annual Leave');
+
 

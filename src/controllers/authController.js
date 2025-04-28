@@ -26,7 +26,7 @@ export const login = async (req, res) => {
 		const user = rows[0];
 
 		// Check if user is active
-		if (user.status_Karyawan !== "Aktif") {
+		if (user.status_Karyawan == "Inaktif") {
 			return res.status(401).json({ message: "Account is inactive" });
 		}
 
