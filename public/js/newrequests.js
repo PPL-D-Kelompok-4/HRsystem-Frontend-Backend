@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             const formData = new FormData(form);
-            const type = formData.get("type");
+            const type = formData.get("leaveType");
             const startDate = formData.get("startDate");
             const endDate = formData.get("endDate");
             const reason = formData.get("reason");
