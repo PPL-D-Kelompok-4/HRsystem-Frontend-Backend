@@ -7,23 +7,18 @@
             <h1 class="text-3xl font-semibold text-gray-800">Dashboard</h1>
             <p class="text-gray-500">Welcome to HR management dashboard.</p>
         </div>
-            <button id="dashboard-add-employee" class="bg-black text-white px-4 py-2 rounded-md">
-                <a href="/addemployee">
-                    Add Employee
-                </a>
-            </button>
+        <button id="dashboard-add-employee" class="bg-black text-white px-4 py-2 rounded-md">
+            <a href="/addemployee">
+                Add Employee
+            </a>
+        </button>
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200">
             <p class="text-gray-500 mb-1">Total Employees</p>
             <p class="text-3xl font-bold"><%= totalEmployees %></p>
-        </div>
-
-        <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200">
-            <p class="text-gray-500 mb-1">Open Positions</p>
-            <p class="text-3xl font-bold">7</p>
         </div>
 
         <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200">
@@ -41,9 +36,12 @@
     <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200 mb-6">
         <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold">Employee Overview</h2>
-            <button id="refresh-employee-chart" class="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-md flex items-center">
+            <button id="refresh-employee-chart"
+                class="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-md flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                    <path fill-rule="evenodd"
+                        d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+                        clip-rule="evenodd" />
                 </svg>
                 Refresh Chart
             </button>
@@ -58,9 +56,24 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Leave Requests -->
         <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200">
-            <h2 class="text-xl font-semibold mb-1">Leave Requests</h2>
+            <h2 class="text-xl font-semibold mb-1">Pending Requests</h2>
             <p class="text-gray-500 text-sm mb-4">Pending leave requests requiring approval</p>
-            <div class="space-y-4" data-dashboard-pending-leave-requests></div>
+            <div class="space-y-4">
+                <% if (pendingLeaves.length > 0) { %>
+                <% pendingLeaves.forEach(leave => { %>
+                <div class="bg-gray-50 p-3 rounded-md border border-gray-200">
+                    <p class="text-gray-700 font-medium"><%= leave.employee %></p>
+                    <p class="text-sm text-gray-500">
+                        From <%= leave.startDate %> to <%= leave.endDate %> — Reason: <%= leave.reason %>
+                    </p>
+                </div>
+                <% }) %>
+                <% } else { %>
+                <div class="text-center py-4 text-gray-500">
+                    No pending leave requests
+                </div>
+                <% } %>
+            </div>
             <div data-dashboard-no-pending-requests class="hidden text-center py-4 text-gray-500">
                 No pending leave requests
             </div>

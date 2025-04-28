@@ -6,15 +6,33 @@ const router = express.Router();
 // Route utama: Tampilkan dashboard
 router.get("/", async (req, res) => {
     try {
-        const query = `
-      SELECT COUNT(*) AS totalEmployees
-      FROM Karyawan
-    `;
-        const [results] = await db.query(query);
-        const totalEmployees = results[0].totalEmployees;
+        const [employeeResult] = await db.query(`
+            SELECT COUNT(*) AS totalEmployees FROM Karyawan
+        `);
+
+        const [pendingLeavesResult] = await db.query(`
+            SELECT 
+                c.leaveID,
+                k.nama AS employee,
+                DATE_FORMAT(c.tanggal_Mulai, '%Y-%m-%d') AS startDate,
+                DATE_FORMAT(c.tanggal_Selesai, '%Y-%m-%d') AS endDate,
+                c.keterangan_Cuti AS reason
+            FROM 
+                Cuti c
+            JOIN 
+                Karyawan k ON c.employeeID = k.employeeID
+            WHERE 
+                c.status = 'Diajukan'
+            ORDER BY 
+                c.tanggal_Pengajuan DESC
+        `);
+
+        const totalEmployees = employeeResult[0].totalEmployees;
+        const pendingLeaves = pendingLeavesResult;
 
         res.render("index", {
-            totalEmployees
+            totalEmployees,
+            pendingLeaves // ✅ Kirim pending leaves ke view
         });
     } catch (error) {
         console.error(error);
@@ -22,48 +40,44 @@ router.get("/", async (req, res) => {
     }
 });
 
-// API untuk Employee Overview Chart (jumlah karyawan per departemen)
+// API untuk Employee Overview Chart
 router.get("/api/overview", async (req, res) => {
     try {
-        const query = `
-        SELECT Departemen.nama_Departemen AS department, COUNT(*) AS total_employees
-        FROM Karyawan
-        JOIN Departemen ON Karyawan.departmentID = Departemen.departmentID
-        GROUP BY Departemen.nama_Departemen
-        `;
-        const [results] = await db.query(query);
+        const [results] = await db.query(`
+            SELECT Departemen.nama_Departemen AS department, COUNT(*) AS total_employees
+            FROM Karyawan
+            JOIN Departemen ON Karyawan.departmentID = Departemen.departmentID
+            GROUP BY Departemen.nama_Departemen
+        `);
         res.json(results);
     } catch (error) {
         console.error(error);
-        res.status(500).json({
-            message: "Error fetching employee overview"
-        });
+        res.status(500).json({ message: "Error fetching employee overview" });
     }
 });
 
-// API untuk Recent Hires (karyawan yang bergabung dalam 30 hari terakhir)
+// API untuk Recent Hires
 router.get("/api/recenthires", async (req, res) => {
     try {
-        const query = `
-      SELECT 
-        Karyawan.nama, 
-        Departemen.nama_Departemen AS department, 
-        Jabatan.nama_Jabatan AS position, 
-        Karyawan.tanggal_Bergabung
-      FROM Karyawan
-      JOIN Departemen ON Karyawan.departmentID = Departemen.departmentID
-      JOIN Jabatan ON Karyawan.positionID = Jabatan.PositionID
-      WHERE Karyawan.tanggal_Bergabung >= CURDATE() - INTERVAL 30 DAY
-      ORDER BY Karyawan.tanggal_Bergabung DESC
-    `;
-        const [results] = await db.query(query);
+        const [results] = await db.query(`
+            SELECT 
+                Karyawan.nama, 
+                Departemen.nama_Departemen AS department, 
+                Jabatan.nama_Jabatan AS position, 
+                Karyawan.tanggal_Bergabung
+            FROM Karyawan
+            JOIN Departemen ON Karyawan.departmentID = Departemen.departmentID
+            JOIN Jabatan ON Karyawan.positionID = Jabatan.PositionID
+            WHERE Karyawan.tanggal_Bergabung >= CURDATE() - INTERVAL 30 DAY
+            ORDER BY Karyawan.tanggal_Bergabung DESC
+        `);
         res.json(results);
     } catch (error) {
         console.error(error);
-        res.status(500).json({
-            message: "Error fetching recent hires"
-        });
+        res.status(500).json({ message: "Error fetching recent hires" });
     }
 });
+
+
 
 export default router;
