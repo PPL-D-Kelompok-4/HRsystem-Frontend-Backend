@@ -1,0 +1,97 @@
+<% title = "HR System" %>
+
+<!-- Dashboard View -->
+<div id="dashboard-view" class="p-6">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-3xl font-semibold text-gray-800">Dashboard</h1>
+            <p class="text-gray-500">Welcome, <%= user.nama %>.</p>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200">
+            <p class="text-gray-500 mb-1">Total Employees</p>
+            <p class="text-3xl font-bold"><%= totalEmployees %></p>
+        </div>
+
+        <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200">
+            <p class="text-gray-500 mb-1">Recent Hires (30 days)</p>
+            <p class="text-3xl font-bold"><%= recentHires.length %></p>
+        </div>
+
+        <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200">
+            <p class="text-gray-500 mb-1">Your Leave Request Status</p>
+
+            <% if (userLeave) { %>
+                <div class="flex items-center justify-between mt-2">
+                    <span class="text-sm font-medium"><%= userLeave.leaveType %></span>
+                    <span class="inline-flex items-center rounded-full 
+                        <% if (userLeave.status === 'Disetujui') { %> 
+                            bg-green-100 text-green-800 
+                        <% } else if (userLeave.status === 'Ditolak') { %> 
+                            bg-red-100 text-red-800 
+                        <% } else { %> 
+                            bg-yellow-100 text-yellow-800 
+                        <% } %>
+                        px-2 py-0.5 text-xs font-medium">
+                        <%= userLeave.status %>
+                    </span>
+                </div>
+                <p class="text-xs text-muted-foreground mt-1">
+                    <%= userLeave.tanggal_Mulai %> to <%= userLeave.tanggal_Selesai %>
+                </p>
+            <% } else { %>
+                <div class="text-sm font-bold mb-2 mt-1">Belum ada pengajuan cuti</div>
+                <a href="/newrequests" class="flex w-full items-center justify-center gap-1 rounded-md border px-3 py-1 text-sm hover:bg-gray-100">
+                    <i class="ri-add-line text-sm"></i>
+                    <span>Ajukan Cuti</span>
+                </a>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Employee Overview Chart -->
+    <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200 mb-6">
+        <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold">Employee Overview</h2>
+            <button id="refresh-employee-chart"
+                class="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-md flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+                        clip-rule="evenodd" />
+                </svg>
+                Refresh Chart
+            </button>
+        </div>
+        <p class="text-gray-500 text-sm mb-4">Employee distribution by department</p>
+        <div>
+            <canvas id="employeeChart" width="600" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Two Column Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Recent Hires -->
+        <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200">
+            <h2 class="text-xl font-semibold mb-1">Recent Hires</h2>
+            <p class="text-gray-500 text-sm mb-4">New employees in the last 30 days</p>
+            
+            <% if (recentHires.length > 0) { %>
+                <div class="space-y-4" data-dashboard-recent-hires></div>
+                <div data-dashboard-no-recent-hires class="hidden text-center py-4 text-gray-500">
+                    No recent hires
+                </div>
+            <% } else { %>
+                <div class="text-center py-4 text-gray-500">
+                    No recent hires
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/dashboard.js"></script>

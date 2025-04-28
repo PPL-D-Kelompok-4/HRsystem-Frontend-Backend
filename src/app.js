@@ -103,9 +103,9 @@ app.get("/salary", (req, res) => {
 	res.render("salary");
 });
 
-app.get("/workhours", (req, res) => {
-	res.render("workhours");
-});
+// app.get("/testing", (req, res) => {
+// 	res.render("dashboardEmployee");
+// });
 
 app.get("/reports", authenticate, (req, res) => {
 	res.render("reports", { title: "Attendance Reports" });
