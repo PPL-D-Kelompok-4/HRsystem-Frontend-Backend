@@ -49,10 +49,10 @@
                 <textarea id="reason" name="reason" rows="3" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black sm:text-sm"></textarea>
             </div>
 
-            <div>
+            <!-- <div>
                 <label for="contactInfo" class="block text-sm font-medium text-gray-700">Contact Information During Leave</label>
                 <input type="text" id="contactInfo" name="contactInfo" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black sm:text-sm" />
-            </div>
+            </div> -->
 
             <div class="flex justify-end">
                 <button type="button" id="cancel-new-request" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black">
@@ -66,4 +66,8 @@
     </div>
 </div>
 
-<script src="/js/newrequests.js"></script>
+<script>
+    window.currentUser = <%- JSON.stringify(user) %>;
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/newRequests.js"></script>
