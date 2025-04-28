@@ -61,85 +61,101 @@ export const getLeaveById = async (req, res) => {
 
 // Get leaves by employee ID
 export const getLeavesByEmployeeId = async (req, res) => {
-	try {
-		const { employeeId } = req.params;
-		const [rows] = await pool.query(
-			`
-      SELECT c.*, k.nama as employee_name
-      FROM Cuti c
-      JOIN Karyawan k ON c.employeeID = k.employeeID
-      WHERE c.employeeID = ?
-      ORDER BY c.tanggal_Pengajuan DESC
-    `,
-			[employeeId]
-		);
+    try {
+        const { employeeId } = req.params;
+        const [rows] = await pool.query(
+            `
+            SELECT 
+                c.leaveID AS id,
+                k.nama AS employee,
+                DATE_FORMAT(c.tanggal_Mulai, '%Y-%m-%d') AS startDate,
+                DATE_FORMAT(c.tanggal_Selesai, '%Y-%m-%d') AS endDate,
+                DATEDIFF(c.tanggal_Selesai, c.tanggal_Mulai) + 1 AS days,
+                c.keterangan_Cuti AS reason,
+                CASE
+                    WHEN c.keterangan_Cuti LIKE '%Sakit%' THEN 'Sick'
+                    WHEN c.keterangan_Cuti LIKE '%Ijin%' THEN 'Personal'
+                    ELSE 'Annual'
+                END AS type,
+                c.status,
+                k.email AS contactInfo,
+                '' AS rejectionReason
+            FROM Cuti c
+            JOIN Karyawan k ON c.employeeID = k.employeeID
+            WHERE c.employeeID = ?
+            ORDER BY c.tanggal_Pengajuan DESC
+            `,
+            [employeeId]
+        );
 
-		res.json(rows);
-	} catch (error) {
-		console.error("Error fetching employee leaves:", error);
-		res.status(500).json({ message: "Server error" });
-	}
+        res.json(rows);
+    } catch (error) {
+        console.error("Error fetching employee leaves:", error);
+        res.status(500).json({ message: "Server error" });
+    }
 };
+
 
 // Create new leave
 export const createLeave = async (req, res) => {
-	try {
-		const { employeeID, tanggal_Mulai, tanggal_Selesai, keterangan_Cuti } =
-			req.body;
+    try {
+        const { tanggal_Mulai, tanggal_Selesai, keterangan_Cuti } = req.body;
 
-		// Validate required fields
-		if (!employeeID || !tanggal_Mulai || !tanggal_Selesai) {
-			return res.status(400).json({
-				message: "Employee ID, start date, and end date are required",
-			});
-		}
+        // ✅ Ambil employeeID dari token user yang login
+        const employeeID = req.user.id;
 
-		// Check if employee exists
-		const [employee] = await pool.query(
-			"SELECT * FROM Karyawan WHERE employeeID = ?",
-			[employeeID]
-		);
-		if (employee.length === 0) {
-			return res.status(404).json({ message: "Employee not found" });
-		}
+        if (!employeeID || !tanggal_Mulai || !tanggal_Selesai) {
+            return res.status(400).json({
+                message: "Employee ID, start date, and end date are required",
+            });
+        }
 
-		// Check if dates are valid
-		const startDate = new Date(tanggal_Mulai);
-		const endDate = new Date(tanggal_Selesai);
-		const today = new Date();
+        const today = new Date().toISOString().split("T")[0]; // tanggal pengajuan sekarang
 
-		if (startDate > endDate) {
-			return res
-				.status(400)
-				.json({ message: "Start date must be before end date" });
-		}
+        const [result] = await pool.query(
+            `INSERT INTO Cuti (
+                employeeID, tanggal_Pengajuan, tanggal_Mulai, tanggal_Selesai, keterangan_Cuti, status
+            ) VALUES (?, ?, ?, ?, ?, ?)`,
+            [
+                employeeID,
+                today,
+                tanggal_Mulai,
+                tanggal_Selesai,
+                keterangan_Cuti || "",
+                "Diajukan",
+            ]
+        );
 
-		// Set application date to today
-		const tanggal_Pengajuan = today.toISOString().split("T")[0];
-
-		const [result] = await pool.query(
-			`INSERT INTO Cuti (
-        employeeID, tanggal_Pengajuan, tanggal_Mulai, tanggal_Selesai, keterangan_Cuti, status
-      ) VALUES (?, ?, ?, ?, ?, ?)`,
-			[
-				employeeID,
-				tanggal_Pengajuan,
-				tanggal_Mulai,
-				tanggal_Selesai,
-				keterangan_Cuti || "",
-				"Diajukan",
-			]
-		);
-
-		res.status(201).json({
-			message: "Leave request created successfully",
-			leaveID: result.insertId,
-		});
-	} catch (error) {
-		console.error("Error creating leave request:", error);
-		res.status(500).json({ message: "Server error" });
-	}
+        res.status(201).json({
+            message: "Leave request created successfully",
+            leaveID: result.insertId,
+        });
+    } catch (error) {
+        console.error("Error creating leave request:", error);
+        res.status(500).json({ message: "Server error" });
+    }
 };
+
+export const checkPendingLeave = async (req, res) => {
+    try {
+        const employeeID = req.user.id;
+
+        const [rows] = await pool.query(
+            `SELECT * FROM Cuti WHERE employeeID = ? AND status = 'Diajukan'`,
+            [employeeID]
+        );
+
+        if (rows.length > 0) {
+            return res.json({ hasPending: true });
+        } else {
+            return res.json({ hasPending: false });
+        }
+    } catch (error) {
+        console.error("Error checking pending leave:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
 
 // Update leave status
 export const updateLeaveStatus = async (req, res) => {
