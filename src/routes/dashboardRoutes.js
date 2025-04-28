@@ -78,6 +78,24 @@ router.get("/api/recenthires", async (req, res) => {
     }
 });
 
+// API untuk Dashboard Stats (Pending Reviews dan Leave Requests)
+router.get("/api/dashboardstats", async (req, res) => {
+    try {
+        
+        const [employeeResult] = await db.query(`SELECT COUNT(*) AS totalEmployees FROM Karyawan`);
+        const [leaveResult] = await db.query(`SELECT COUNT(*) AS totalLeaveRequests FROM Cuti`);
+        const [pendingResult] = await db.query(`SELECT COUNT(*) AS pendingLeaves FROM Cuti WHERE status = 'Diajukan'`);
+
+        res.json({
+            totalEmployees: employeeResult[0].totalEmployees,
+            totalLeaveRequests: leaveResult[0].totalLeaveRequests,
+            pendingLeaves: pendingResult[0].pendingLeaves,
+        });
+    } catch (error) {
+        console.error("Error fetching dashboard stats:", error);
+        res.status(500).json({ message: "Error fetching dashboard statistics" });
+    }
+});
 
 
 export default router;

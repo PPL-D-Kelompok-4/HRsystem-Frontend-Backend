@@ -176,6 +176,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  async function renderDashboardStats() {
+    try {
+      const res = await fetch("/api/dashboardstats");
+      const stats = await res.json();
+  
+      // Isi angka ke DOM
+      const pendingReviewsEl = document.querySelector("[data-dashboard-pending-reviews]");
+      const leaveRequestsEl = document.querySelector("[data-dashboard-leave-requests]");
+  
+      if (pendingReviewsEl) {
+        pendingReviewsEl.textContent = stats.pendingLeaves ?? 0;
+      }
+      if (leaveRequestsEl) {
+        leaveRequestsEl.textContent = stats.totalLeaveRequests ?? 0;
+      }
+  
+    } catch (error) {
+      console.error("Failed to load dashboard stats:", error);
+    }
+  }  
+
   refreshChartBtn?.addEventListener("click", () => {
     renderEmployeeChart();
   });
@@ -183,5 +204,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initial load
   renderEmployeeChart();
   renderRecentHires();
-  renderPendingLeaves(); // <-- ✅ Tambahkan ini
+  renderPendingLeaves();
+  renderDashboardStats();
 });
