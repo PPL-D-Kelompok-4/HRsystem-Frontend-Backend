@@ -107,7 +107,7 @@ app.get("/workhours", (req, res) => {
 });
 
 app.get("/reports", (req, res) => {
-	res.render("reports");
+	res.render("reports", { title: "Attendance Reports" });
 });
 
 // app.get("/addemployee", (req, res) => {
