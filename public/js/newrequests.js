@@ -1,48 +1,92 @@
-// newrequest.js
-
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("new-request-form");
     const cancelButton = document.getElementById("cancel-new-request");
-    const newRequestView = document.getElementById("new-request-view");
-    const allRequestsView = document.getElementById("all-requests-view");
 
-    function switchToAllRequests() {
-        newRequestView.classList.add("hidden");
-        allRequestsView?.classList.remove("hidden");
-    }
+    const currentUser = window.currentUser || {}; // ambil user dari global window
 
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const formData = new FormData(form);
-        const newRequest = {
-            id: "LEA" + Math.floor(1000 + Math.random() * 9000),
-            employee: "You", // can be dynamically fetched in a real system
-            type: formData.get("type"),
-            startDate: formData.get("startDate"),
-            endDate: formData.get("endDate"),
-            days: calculateDays(formData.get("startDate"), formData.get("endDate")),
-            status: "Pending",
-            reason: formData.get("reason"),
-            contactInfo: formData.get("contactInfo") || ""
-        };
+        try {
+            const formData = new FormData(form);
+            const type = formData.get("type");
+            const startDate = formData.get("startDate");
+            const endDate = formData.get("endDate");
+            const reason = formData.get("reason");
 
-        // Simulate adding to system (store temporarily)
-        console.log("Submitted Leave Request:", newRequest);
-        alert("Leave request submitted successfully.");
-        form.reset();
-        switchToAllRequests();
+            if (!type || !startDate || !endDate || !reason) {
+                Swal.fire("Error", "Please complete all fields!", "error");
+                return;
+            }
+
+            // 🔥 Cek apakah user punya pending request
+            const pendingRes = await fetch("/api/leaves/check-pending", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${getToken()}`,
+                },
+            });
+
+            if (!pendingRes.ok) {
+                throw new Error("Failed to check pending leave");
+            }
+
+            const pendingData = await pendingRes.json();
+
+            if (pendingData.hasPending) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Request Still Pending!",
+                    text: "You already have a pending leave request. Please wait until it's approved or rejected before creating a new one.",
+                });
+                return;
+            }
+
+            // ✅ Lanjut submit request baru
+            const response = await fetch("/api/leaves", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${getToken()}`,
+                },
+                body: JSON.stringify({
+                    tanggal_Mulai: startDate,
+                    tanggal_Selesai: endDate,
+                    keterangan_Cuti: reason,
+                    leaveType: type,
+                    contactInfo: currentUser.email || "", // ✨ AUTO ISI dari user login
+                }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Failed to submit request");
+            }
+
+            Swal.fire({
+                icon: "success",
+                title: "Request Submitted!",
+                text: "Your leave request has been successfully submitted.",
+            }).then(() => {
+                window.location.href = "/allrequests";
+            });
+
+        } catch (error) {
+            console.error("Error submitting leave request:", error);
+            Swal.fire({
+                icon: "error",
+                title: "Submission Failed",
+                text: error.message || "Unknown error occurred",
+            });
+        }
     });
 
-    cancelButton?.addEventListener("click", () => {
-        form.reset();
-        switchToAllRequests();
+    cancelButton.addEventListener("click", () => {
+        window.location.href = "/allrequests";
     });
 
-    function calculateDays(start, end) {
-        const startDate = new Date(start);
-        const endDate = new Date(end);
-        const timeDiff = endDate - startDate;
-        return timeDiff >= 0 ? Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1 : 1;
+    function getToken() {
+        const value = document.cookie.split('; ').find(row => row.startsWith('token='));
+        return value ? value.split('=')[1] : '';
     }
 });
