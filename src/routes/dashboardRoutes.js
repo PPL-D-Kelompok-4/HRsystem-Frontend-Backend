@@ -56,7 +56,7 @@ router.get("/", async (req, res) => {
                 WHERE c.employeeID = ?
                 ORDER BY c.tanggal_Pengajuan DESC 
                 LIMIT 1
-            `, [user.employeeID]);            
+            `, [user.id]);            
 
             res.render("dashboardEmployee", {
                 user,
