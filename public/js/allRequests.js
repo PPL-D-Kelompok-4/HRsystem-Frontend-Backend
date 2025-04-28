@@ -28,6 +28,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const confirmRejectBtn = document.getElementById("confirm-reject");
     let currentRejectRequest = null;
 
+    const currentUser = window.currentUser || {}; 
+    const isHR = currentUser.departmentID === 1;
+
+
     function getFilteredRequests() {
         return state.allRequests
             .filter(req =>
@@ -80,16 +84,18 @@ document.addEventListener("DOMContentLoaded", () => {
                         </button>
                         <div id="dropdown-${index + start}" class="hidden absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg border border-gray-200 z-10">
                             <button class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-view-index="${index + start}">View Details</button>
-                            ${
-                                req.status === "Diajukan" || req.status === "Ditolak"
-                                    ? `<button class="block w-full text-left px-4 py-2 text-sm text-green-700 hover:bg-gray-100" data-approve-index="${index + start}">Approve</button>`
-                                    : ""
-                            }
-                            ${
-                                req.status === "Diajukan" || req.status === "Disetujui"
-                                    ? `<button class="block w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-gray-100" data-reject-index="${index + start}">Reject</button>`
-                                    : ""
-                            }
+
+                            ${(isHR && (req.status === "Diajukan" || req.status === "Ditolak"))
+                                ? `<button class="block w-full text-left px-4 py-2 text-sm text-green-700 hover:bg-gray-100" data-approve-index="${index + start}">Approve</button>`
+                                : ""}
+
+                            ${(isHR && (req.status === "Diajukan" || req.status === "Disetujui"))
+                                ? `<button class="block w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-gray-100" data-reject-index="${index + start}">Reject</button>`
+                                : ""}
+
+                            ${(req.status === "Diajukan" && req.employee === currentUser.name)
+                                ? `<button class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100" data-cancel-index="${index + start}">Cancel Request</button>`
+                                : ""}
                         </div>
                     </div>
                 </td>
@@ -105,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
         rowsContainer.querySelectorAll("[data-dropdown-toggle]").forEach(btn => {
             const targetId = btn.getAttribute("data-dropdown-toggle");
             btn.addEventListener("click", (e) => {
-                e.stopPropagation(); // Supaya click tombol tidak nutup dari document click
+                e.stopPropagation();
                 const target = document.getElementById(targetId);
                 const isHidden = target.classList.contains("hidden");
                 closeAllDropdowns();
@@ -113,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     target.classList.remove("hidden");
                 }
             });
-        });                
+        });              
 
         rowsContainer.querySelectorAll("[data-approve-index]").forEach(btn => {
             btn.addEventListener("click", async () => {
@@ -149,6 +155,52 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         });
+
+        rowsContainer.querySelectorAll("[data-cancel-index]").forEach(btn => {
+            btn.addEventListener("click", async () => {
+                const i = parseInt(btn.getAttribute("data-cancel-index"), 10);
+                const req = getSortedRequests()[i];
+        
+                const confirmCancel = await Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You are about to cancel this pending leave request.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, cancel it!',
+                    cancelButtonText: 'No, keep it'
+                });
+        
+                if (confirmCancel.isConfirmed) {
+                    try {
+                        const response = await fetch(`/api/leaves/${req.id}`, {
+                            method: "DELETE",
+                            headers: { "Content-Type": "application/json" }
+                        });
+        
+                        if (!response.ok) {
+                            throw new Error((await response.json()).message || "Failed to cancel request");
+                        }
+        
+                        state.allRequests = state.allRequests.filter(r => r.id !== req.id);
+                        renderRequests();
+        
+                        Swal.fire({
+                            icon: "success",
+                            title: "Cancelled!",
+                            text: "Leave request cancelled successfully.",
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    } catch (error) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: error.message
+                        });
+                    }
+                }
+            });
+        });        
 
         rowsContainer.querySelectorAll("[data-reject-index]").forEach(btn => {
             btn.addEventListener("click", () => {
@@ -231,12 +283,21 @@ document.addEventListener("DOMContentLoaded", () => {
         modal.classList.remove("hidden");
         for (const key in request) {
             const el = modal.querySelector(`[data-bind="${key}"]`);
-            if (el) el.textContent = request[key] || "Not provided";
+            if (el) {
+                if (key === "startDate" || key === "endDate") {
+                    el.textContent = formatDate(request[key]);
+                } else if (key === "contactInfo") {
+                    el.textContent = request[key] ? request[key] : "Not provided";
+                } else {
+                    el.textContent = request[key] || "Not provided";
+                }
+            }
         }
+    
         const badge = modal.querySelector("[data-status]");
         badge.textContent = translateStatus(request.status);
         badge.className = `px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClass(request.status)}`;
-
+    
         const rejectionSection = modal.querySelector("[data-rejection-section]");
         if (request.status === "Ditolak") {
             rejectionSection.classList.remove("hidden");
@@ -244,6 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
             rejectionSection.classList.add("hidden");
         }
     }
+    
 
     function closeAllDropdowns() {
         sortMenu.classList.add("hidden");
@@ -256,8 +318,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function formatDate(dateString) {
         if (!dateString) return "";
-        return dateString.split('T')[0];
+        return dateString.split('T')[0]; // Ambil sebelum 'T' kalau ada
     }
+
+    function calculateDays(start, end) {
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+        const diffTime = endDate - startDate;
+        return diffTime >= 0 ? Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1 : 1;
+    }
+    
+    
 
     searchInput.addEventListener("input", e => {
         state.leaveRequestSearch = e.target.value;

@@ -12,11 +12,15 @@ import {
 	leaveValidationRules,
 	validate,
 } from "../middlewares/validationMiddleware.js";
+import { checkPendingLeave } from "../controllers/leaveController.js";
 
 const router = express.Router();
 
+// Get pending check leave request
+router.get("/check-pending", authenticate, checkPendingLeave);
+
 // Get all leaves
-router.get("/", authenticate, isAdmin, getAllLeaves);
+router.get("/", authenticate, isAdmin, getAllLeaves); // semua leave (HR only)
 
 // Get leave by ID
 router.get("/:id", authenticate, getLeaveById);
@@ -26,12 +30,11 @@ router.get("/employee/:employeeId", authenticate, getLeavesByEmployeeId);
 
 // Create new leave
 router.post(
-	"/",
-	authenticate,
-	leaveValidationRules.create,
-	validate,
-	createLeave
+    "/", 
+    authenticate,
+    createLeave
 );
+
 
 // Update leave status
 router.put(
