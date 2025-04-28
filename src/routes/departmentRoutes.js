@@ -23,7 +23,7 @@ router.get("/:id", authenticate, getDepartmentById);
 // Create new department
 router.post(
 	"/",
-	/*authenticate,*/
+	authenticate,
 	isAdmin,
 	departmentValidationRules.create,
 	validate,
@@ -33,7 +33,7 @@ router.post(
 // Update department
 router.put(
 	"/:id",
-	/*authenticate,*/
+	authenticate,
 	isAdmin,
 	departmentValidationRules.update,
 	validate,
@@ -41,6 +41,6 @@ router.put(
 );
 
 // Delete department
-router.delete("/:id", /*authenticate,*/ isAdmin, deleteDepartment);
+router.delete("/:id", authenticate, isAdmin, deleteDepartment);
 
 export default router;

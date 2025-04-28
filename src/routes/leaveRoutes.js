@@ -7,7 +7,7 @@ import {
 	updateLeaveStatus,
 	deleteLeave,
 } from "../controllers/leaveController.js";
-import { isAdmin } from "../middlewares/authMiddleware.js";
+import { authenticate, isAdmin } from "../middlewares/authMiddleware.js";
 import {
 	leaveValidationRules,
 	validate,

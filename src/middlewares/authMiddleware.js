@@ -14,6 +14,8 @@ export const authenticate = (req, res, next) => {
 		const decoded = jwt.verify(token, config.jwtSecret);
 		req.user = decoded;
 
+		// console.log('Decoded User:', decoded);
+
 		next();
 	} catch (error) {
 		console.error("Authentication error:", error);
@@ -37,8 +39,8 @@ export const isAdmin = (req, res, next) => {
 			return next(); // Jika guest, lanjut saja (untuk testing)
 		}
 
-		if (req.user.positionID !== 1) {
-			return res.status(403).json({ message: "Admin privileges required" });
+		if (req.user.departmentID !== 1) {
+			return res.status(403).json({ message: 'Access restricted to HR Department only' });
 		}
 
 		next();
