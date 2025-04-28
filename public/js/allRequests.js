@@ -125,19 +125,21 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.addEventListener("click", async () => {
                 const i = parseInt(btn.getAttribute("data-approve-index"), 10);
                 const req = getSortedRequests()[i];
-
+        
                 try {
                     const response = await fetch(`/api/leaves/${req.id}/status`, {
                         method: "PUT",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ status: "Disetujui" })
+                        body: JSON.stringify({ status: "Disetujui" }) // ✅ Hanya kirim status approve
                     });
-
+        
                     if (!response.ok) {
-                        throw new Error((await response.json()).message || "Failed to approve leave");
+                        const res = await response.json();
+                        throw new Error(res.message || "Failed to approve leave");
                     }
-
+        
                     req.status = "Disetujui";
+                    req.rejectionReason = "-"; // Reset rejection reason jika disetujui
                     renderRequests();
                     Swal.fire({
                         icon: "success",
@@ -155,6 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         });
+        
 
         rowsContainer.querySelectorAll("[data-cancel-index]").forEach(btn => {
             btn.addEventListener("click", async () => {
@@ -233,7 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const response = await fetch(`/api/leaves/${currentRejectRequest.id}/status`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ status: "Ditolak", keterangan_Cuti: reason })
+                    body: JSON.stringify({ status: "Ditolak", rejectionReason: reason })
                 });
 
                 if (!response.ok) {
@@ -288,11 +291,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     el.textContent = formatDate(request[key]);
                 } else if (key === "contactInfo") {
                     el.textContent = request[key] ? request[key] : "Not provided";
+                } else if (key === "rejectionReason") {
+                    el.textContent = request[key] !== "-" ? request[key] : "No specific reason provided";
                 } else {
                     el.textContent = request[key] || "Not provided";
                 }
             }
-        }
+        }        
     
         const badge = modal.querySelector("[data-status]");
         badge.textContent = translateStatus(request.status);
