@@ -71,7 +71,7 @@ app.use("/api/employees", employeeRoutes);
 app.use("/api/positions", positionRoutes);
 app.use("/api/payrolls", payrollRoutes);
 app.use("/api/leaves", leaveRoutes);
-app.use("/api/attendances", attendanceRoutes);
+app.use("/api/attendance", attendanceRoutes);
 app.use("/api/auth", authRoutes);
 
 app.use("/", dashboardRoutes);

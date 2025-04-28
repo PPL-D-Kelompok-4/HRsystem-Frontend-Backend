@@ -260,6 +260,39 @@ export const createOrUpdateAttendance = async (req, res) => {
 	}
 };
 
+// Get today's attendance for a specific employee
+export const getTodayAttendanceByEmployeeId = async (req, res) => {
+	try {
+		const { employeeId } = req.params;
+
+		// Get today's date in YYYY-MM-DD
+		const today = new Date().toISOString().split("T")[0];
+
+		// Query Kehadiran untuk hari ini
+		const [rows] = await pool.query(
+			`
+      SELECT a.*, k.nama as employee_name
+      FROM Kehadiran a
+      JOIN Karyawan k ON a.employeeID = k.employeeID
+      WHERE a.employeeID = ? AND a.tanggal = ?
+      LIMIT 1
+    `,
+			[employeeId, today]
+		);
+
+		if (rows.length === 0) {
+			return res
+				.status(404)
+				.json({ message: "No attendance record found for today" });
+		}
+
+		res.json(rows[0]);
+	} catch (error) {
+		console.error("Error fetching today's attendance:", error);
+		res.status(500).json({ message: "Server error" });
+	}
+};
+
 // Delete attendance
 export const deleteAttendance = async (req, res) => {
 	try {

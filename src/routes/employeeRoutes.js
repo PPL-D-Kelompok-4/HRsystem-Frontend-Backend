@@ -38,7 +38,6 @@ router.put("/:id/status", authenticate, isAdmin, updateEmployeeStatus);
 router.put(
 	"/:id",
 	authenticate,
-	isAdmin,
 	employeeValidationRules.update,
 	validate,
 	updateEmployee

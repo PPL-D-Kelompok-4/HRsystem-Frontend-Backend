@@ -8,6 +8,7 @@ import {
 	clockOut,
 	createOrUpdateAttendance,
 	deleteAttendance,
+	getTodayAttendanceByEmployeeId,
 } from "../controllers/attendanceController.js";
 import { authenticate, isAdmin } from "../middlewares/authMiddleware.js";
 import {
@@ -22,6 +23,9 @@ router.get("/", authenticate, isAdmin, getAllAttendances);
 
 // Get attendance by ID
 router.get("/:id", authenticate, getAttendanceById);
+
+// Get today attendance
+router.get("/today/:employeeId", authenticate, getTodayAttendanceByEmployeeId);
 
 // Get attendances by employee ID
 router.get("/employee/:employeeId", authenticate, getAttendancesByEmployeeId);
