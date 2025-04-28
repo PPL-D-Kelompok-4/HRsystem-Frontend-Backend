@@ -31,6 +31,7 @@ import calendarRoutes from "./routes/calendarRoutes.js";
 import loginRoutes from "./routes/loginRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import allRequestsRoutes from "./routes/allRequestsRoutes.js";
+import { authenticate } from "./middlewares/authMiddleware.js";
 
 // Create Express app
 const app = express();
@@ -74,24 +75,24 @@ app.use("/api/leaves", leaveRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/auth", authRoutes);
 
-app.use("/", dashboardRoutes);
-app.use("/allrequests", allRequestsRoutes);
-app.use("/allemployees", allEmployeesRoutes);
-app.use("/addemployee", addEmployeeRoutes);
-app.use("/calendar", calendarRoutes);
 app.use("/", loginRoutes);
-app.use("/", profileRoutes);
+app.use("/", authenticate, dashboardRoutes);
+app.use("/allrequests", authenticate, allRequestsRoutes);
+app.use("/allemployees", authenticate, allEmployeesRoutes);
+app.use("/addemployee", authenticate, addEmployeeRoutes);
+app.use("/calendar", authenticate, calendarRoutes);
+app.use("/", authenticate, profileRoutes);
 
 app.post("/api/auth/logout", (req, res) => {
 	res.clearCookie("token");
 	res.json({ message: "Logged out successfully" });
 });
 
-app.get("/attendance", (req, res) => {
+app.get("/attendance", authenticate, (req, res) => {
 	res.render("attendance");
 });
 
-app.get("/newrequests", (req, res) => {
+app.get("/newrequests", authenticate, (req, res) => {
 	res.render("newRequests", {
 		title: "HR System",
 		user: req.user,
@@ -106,23 +107,19 @@ app.get("/workhours", (req, res) => {
 	res.render("workhours");
 });
 
-app.get("/reports", (req, res) => {
+app.get("/reports", authenticate, (req, res) => {
 	res.render("reports", { title: "Attendance Reports" });
 });
 
-// app.get("/addemployee", (req, res) => {
-// 	res.render("addEmployee");
-// });
-
-// app.get("/profile", (req, res) => {
-// 	res.render("profile");
-// });
-
-// 404 handler
+// Handler 404 Not Found
 app.use((req, res, next) => {
-	res.status(404).json({
-		message: "Route not found",
-	});
+	if (req.accepts("html")) {
+		res.redirect("/");
+	} else if (req.accepts("json")) {
+		res.status(404).json({ message: "Not found" });
+	} else {
+		res.status(404).type("txt").send("Not found");
+	}
 });
 
 // Error handler

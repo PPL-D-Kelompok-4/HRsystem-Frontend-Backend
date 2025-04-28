@@ -38,7 +38,6 @@ const App = {
 			this.setCurrentDate();
 			this.startClock();
 
-			// 🔥 langsung load semua data attendance
 			await this.loadTodayAttendance();
 			await this.loadAttendanceHistory();
 		} catch (error) {
