@@ -4,19 +4,30 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
     try {
+        const token = req.cookies?.token; // AMBIL DARI COOKIE!
+
+        if (!token) {
+            console.error('No token found in cookies');
+            return res.redirect('/login'); // Redirect login kalau belum login
+        }
+
         const response = await fetch("http://localhost:3000/api/leaves", {
             method: "GET",
             headers: {
-                Authorization: req.headers.authorization || "", // Pastikan user sudah login!
+                Authorization: `Bearer ${token}`, // PAKAI TOKEN DARI COOKIE!
             },
         });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch leaves');
+        }
 
         const apiLeaves = await response.json();
 
         const leaveRequests = apiLeaves.map((leave) => ({
             id: leave.id,
             employee: leave.employee,
-            type: leave.type, // <-- langsung dari SQL, tidak fallback manual lagi
+            type: leave.type,
             startDate: leave.startDate,
             endDate: leave.endDate,
             days: leave.days,
@@ -24,7 +35,7 @@ router.get("/", async (req, res) => {
             reason: leave.reason,
             contactInfo: leave.contactInfo,
             rejectionReason: leave.rejectionReason || "",
-        }));        
+        }));
 
         res.render("allRequests", {
             leaveRequests,

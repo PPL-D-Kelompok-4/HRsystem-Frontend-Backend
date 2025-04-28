@@ -23,7 +23,7 @@ router.get("/:id", authenticate, getPositionById);
 // Create new position
 router.post(
 	"/",
-	/*authenticate,*/
+	authenticate,
 	isAdmin,
 	positionValidationRules.create,
 	validate,
@@ -33,7 +33,7 @@ router.post(
 // Update position
 router.put(
 	"/:id",
-	/*authenticate,*/
+	authenticate,
 	isAdmin,
 	positionValidationRules.update,
 	validate,
@@ -41,6 +41,6 @@ router.put(
 );
 
 // Delete position
-router.delete("/:id", /*authenticate,*/ isAdmin, deletePosition);
+router.delete("/:id", authenticate, isAdmin, deletePosition);
 
 export default router;
