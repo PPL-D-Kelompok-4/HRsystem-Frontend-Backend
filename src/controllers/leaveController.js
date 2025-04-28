@@ -11,11 +11,7 @@ export const getAllLeaves = async (req, res) => {
 				DATE_FORMAT(c.tanggal_Selesai, '%Y-%m-%d') AS endDate,
 				DATEDIFF(c.tanggal_Selesai, c.tanggal_Mulai) + 1 AS days,
 				c.keterangan_Cuti AS reason,
-				CASE
-					WHEN c.keterangan_Cuti LIKE '%Sakit%' THEN 'Sick'
-					WHEN c.keterangan_Cuti LIKE '%Ijin%' THEN 'Personal'
-					ELSE 'Annual'
-				END AS type,
+				c.leaveType AS type, -- ✅ Langsung ambil dari leaveType kolom
 				c.status,
 				k.email AS contactInfo,
 				c.rejectionReason
@@ -25,7 +21,7 @@ export const getAllLeaves = async (req, res) => {
 				Karyawan k ON c.employeeID = k.employeeID
 			ORDER BY 
 				c.leaveID ASC;
-		`);		
+		`);				
 
 		res.json(rows);
 	} catch (error) {
@@ -98,7 +94,7 @@ export const getLeavesByEmployeeId = async (req, res) => {
 // Create new leave
 export const createLeave = async (req, res) => {
 	try {
-		const { tanggal_Mulai, tanggal_Selesai, keterangan_Cuti } = req.body;
+		const { tanggal_Mulai, tanggal_Selesai, keterangan_Cuti, leaveType } = req.body;
 		const employeeID = req.user.id;
 
 		if (!employeeID || !tanggal_Mulai || !tanggal_Selesai) {
@@ -110,18 +106,10 @@ export const createLeave = async (req, res) => {
 		const today = new Date().toISOString().split("T")[0];
 
 		const [result] = await pool.query(
-			`INSERT INTO Cuti (
-                employeeID, tanggal_Pengajuan, tanggal_Mulai, tanggal_Selesai, keterangan_Cuti, status
-            ) VALUES (?, ?, ?, ?, ?, ?)`,
-			[
-				employeeID,
-				today,
-				tanggal_Mulai,
-				tanggal_Selesai,
-				keterangan_Cuti || "",
-				"Diajukan",
-			]
-		);
+			`INSERT INTO Cuti (employeeID, tanggal_Pengajuan, tanggal_Mulai, tanggal_Selesai, keterangan_Cuti, status, leaveType)
+			 VALUES (?, ?, ?, ?, ?, ?, ?)`,
+			[employeeID, today, tanggal_Mulai, tanggal_Selesai, keterangan_Cuti || "", "Diajukan", leaveType || "Annual Leave"]
+		);		
 
 		res.status(201).json({
 			message: "Leave request created successfully",
