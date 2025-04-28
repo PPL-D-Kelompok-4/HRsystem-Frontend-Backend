@@ -82,6 +82,11 @@ app.use("/calendar", calendarRoutes);
 app.use("/", loginRoutes);
 app.use("/", profileRoutes);
 
+app.post("/api/auth/logout", (req, res) => {
+	res.clearCookie("token");
+	res.json({ message: "Logged out successfully" });
+});
+
 app.get("/attendance", (req, res) => {
 	res.render("attendance");
 });

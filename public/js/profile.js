@@ -41,15 +41,59 @@ const fillEditForm = () => {
 };
 
 // Save Profile after editing
-const saveProfile = () => {
-	userProfile.firstName = document.getElementById("editFirstName").value;
-	userProfile.lastName = document.getElementById("editLastName").value;
-	userProfile.email = document.getElementById("editEmail").value;
-	userProfile.password = document.getElementById("editPassword").value;
-	userProfile.phone = document.getElementById("editPhone").value;
+const saveProfile = async () => {
+	const updatedProfile = {
+		nama: `${document.getElementById("editFirstName").value} ${
+			document.getElementById("editLastName").value
+		}`,
+		email: document.getElementById("editEmail").value,
+		password: document.getElementById("editPassword").value,
+		no_Telp: document.getElementById("editPhone").value,
+	};
 
-	populateProfile();
-	toggleEditMode(false);
+	try {
+		const response = await fetch(`/api/employees/${userProfile.employeeID}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+			body: JSON.stringify(updatedProfile),
+		});
+
+		if (!response.ok) {
+			const err = await response.json();
+			throw new Error(err.message || "Gagal update profile");
+		}
+
+		const updatedUser = await response.json();
+
+		// Update local userProfile setelah berhasil update
+		userProfile.firstName = updatedProfile.nama.split(" ")[0];
+		userProfile.lastName = updatedProfile.nama.split(" ").slice(1).join(" ");
+		userProfile.email = updatedProfile.email;
+		userProfile.phone = updatedProfile.no_Telp;
+		userProfile.password = updatedProfile.password;
+
+		populateProfile();
+		toggleEditMode(false);
+
+		Swal.fire({
+			icon: "success",
+			title: "Profile Updated!",
+			text: "Your profile has been successfully updated.",
+			confirmButtonColor: "#3085d6",
+		});
+	} catch (error) {
+		console.error("Error updating profile:", error.message);
+
+		Swal.fire({
+			icon: "error",
+			title: "Update Failed",
+			text: error.message || "Failed to update profile.",
+			confirmButtonColor: "#d33",
+		});
+	}
 };
 
 // Event Listeners
@@ -85,11 +129,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 		const user = await response.json();
 
 		window.userProfile = {
+			employeeID: user.employeeID,
 			firstName: user.nama?.split(" ")[0] || "First",
 			lastName: user.nama?.split(" ").slice(1).join(" ") || "Last",
 			email: user.email || "email@example.com",
 			phone: user.no_Telp || "08123456789",
-			password: user.password || "password123", // ✅ ambil dari API
+			password: user.password || "password123",
 			department: user.nama_Departemen || "IT Department",
 		};
 
@@ -97,6 +142,51 @@ document.addEventListener("DOMContentLoaded", async () => {
 	} catch (error) {
 		console.error("Error loading profile:", error.message);
 		window.location.href = "/login";
+	}
+});
+
+// Logout
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+	const confirm = await Swal.fire({
+		title: "Are you sure?",
+		text: "You will be logged out!",
+		icon: "warning",
+		showCancelButton: true,
+		confirmButtonColor: "#d33",
+		cancelButtonColor: "#3085d6",
+		confirmButtonText: "Yes, logout!",
+	});
+
+	if (confirm.isConfirmed) {
+		try {
+			const response = await fetch("/api/auth/logout", {
+				method: "POST", // atau GET tergantung API kamu
+				credentials: "include",
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to logout");
+			}
+
+			Swal.fire({
+				icon: "success",
+				title: "Logged Out!",
+				text: "You have been logged out successfully.",
+				timer: 2000,
+				showConfirmButton: false,
+			});
+
+			setTimeout(() => {
+				window.location.href = "/login"; // Redirect ke login page
+			}, 2000);
+		} catch (error) {
+			console.error("Logout error:", error.message);
+			Swal.fire({
+				icon: "error",
+				title: "Logout Failed",
+				text: error.message,
+			});
+		}
 	}
 });
 
