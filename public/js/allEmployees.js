@@ -242,9 +242,12 @@ document.addEventListener("DOMContentLoaded", () => {
             "Inactive": "Inaktif"
         };
     
-        fetch(`/allemployees/${employeeId}/status`, {
+        fetch(`/api/employees/${employeeId}/status`, {  // 🔥 Ganti ke API beneran
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+                "Content-Type": "application/json"
+                // Tidak perlu Authorization manual karena pakai cookie HttpOnly
+            },
             body: JSON.stringify({ status_Karyawan: statusMapping[status] })
         })
         .then(response => {
@@ -254,7 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(() => {
             const row = document.getElementById(`employeeRow-${index}`);
             const statusCell = row.querySelector("td:nth-child(7) span");
-
+    
             if (statusCell) {
                 statusCell.textContent = status;
                 if (status === "Active") {
@@ -266,12 +269,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
             toggleEmployeeMenu(index);
+    
+            // 🔥 Tambahkan SweetAlert success
+            Swal.fire({
+                icon: "success",
+                title: "Success",
+                text: "Employee status updated successfully!",
+                timer: 2000,
+                showConfirmButton: false
+            });
         })
         .catch(err => {
             console.error(err);
-            alert("Failed to update employee status");
+            Swal.fire({
+                icon: "error",
+                title: "Failed",
+                text: "Failed to update employee status"
+            });
         });
-    };
+    };    
 
     sortLabel.textContent = getSortLabel(employeeSortType);
 });
