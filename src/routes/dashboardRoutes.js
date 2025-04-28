@@ -6,39 +6,71 @@ const router = express.Router();
 // Route utama: Tampilkan dashboard
 router.get("/", async (req, res) => {
     try {
-        const [employeeResult] = await db.query(`
-            SELECT COUNT(*) AS totalEmployees FROM Karyawan
-        `);
+        const user = req.user; // 🔥 ambil data user dari session/auth middleware
 
-        const [pendingLeavesResult] = await db.query(`
-            SELECT 
-                c.leaveID,
-                k.nama AS employee,
-                DATE_FORMAT(c.tanggal_Mulai, '%Y-%m-%d') AS startDate,
-                DATE_FORMAT(c.tanggal_Selesai, '%Y-%m-%d') AS endDate,
-                c.keterangan_Cuti AS reason
-            FROM 
-                Cuti c
-            JOIN 
-                Karyawan k ON c.employeeID = k.employeeID
-            WHERE 
-                c.status = 'Diajukan'
-            ORDER BY 
-                c.tanggal_Pengajuan DESC
-        `);
-
+        const [employeeResult] = await db.query(`SELECT COUNT(*) AS totalEmployees FROM Karyawan`);
         const totalEmployees = employeeResult[0].totalEmployees;
-        const pendingLeaves = pendingLeavesResult;
 
-        res.render("index", {
-            totalEmployees,
-            pendingLeaves // ✅ Kirim pending leaves ke view
-        });
+        // Jika HR (departmentID = 1)
+        if (user.departmentID === 1) {
+            const [pendingLeavesResult] = await db.query(`
+                SELECT 
+                    c.leaveID,
+                    k.nama AS employee,
+                    DATE_FORMAT(c.tanggal_Mulai, '%Y-%m-%d') AS startDate,
+                    DATE_FORMAT(c.tanggal_Selesai, '%Y-%m-%d') AS endDate,
+                    c.keterangan_Cuti AS reason
+                FROM 
+                    Cuti c
+                JOIN 
+                    Karyawan k ON c.employeeID = k.employeeID
+                WHERE 
+                    c.status = 'Diajukan'
+                ORDER BY 
+                    c.tanggal_Pengajuan DESC
+            `);
+
+            const pendingLeaves = pendingLeavesResult;
+
+            res.render("index", {
+                totalEmployees,
+                pendingLeaves
+            });
+
+        } else {
+            // Kalau Employee biasa, ambil data untuk dashboard employee
+            const [recentHiresResult] = await db.query(`
+                SELECT nama, tanggal_Bergabung
+                FROM Karyawan
+                WHERE tanggal_Bergabung >= CURDATE() - INTERVAL 30 DAY
+                ORDER BY tanggal_Bergabung DESC
+            `);
+
+            const [userLeaveResult] = await db.query(`
+                SELECT 
+                    c.keterangan_Cuti AS leaveType,
+                    c.status,
+                    DATE_FORMAT(c.tanggal_Mulai, '%Y-%m-%d') AS tanggal_Mulai,
+                    DATE_FORMAT(c.tanggal_Selesai, '%Y-%m-%d') AS tanggal_Selesai
+                FROM Cuti c
+                WHERE c.employeeID = ?
+                ORDER BY c.tanggal_Pengajuan DESC 
+                LIMIT 1
+            `, [user.employeeID]);            
+
+            res.render("dashboardEmployee", {
+                user,
+                totalEmployees,
+                recentHires: recentHiresResult,
+                userLeave: userLeaveResult[0] || null
+            });
+        }
     } catch (error) {
         console.error(error);
         res.status(500).send("Database error");
     }
 });
+
 
 // API untuk Employee Overview Chart
 router.get("/api/overview", async (req, res) => {
