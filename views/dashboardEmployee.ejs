@@ -1,5 +1,21 @@
 <% title = "HR System" %>
 
+<%
+    // Helper functions
+    function translateStatus(status) {
+        if (status === 'Diajukan') return 'Pending';
+        if (status === 'Disetujui') return 'Approved';
+        if (status === 'Ditolak') return 'Rejected';
+        return status;
+    }
+
+    function statusBadgeColor(status) {
+        if (status === 'Disetujui') return 'bg-green-100 text-green-800';
+        if (status === 'Ditolak') return 'bg-red-100 text-red-800';
+        return 'bg-yellow-100 text-yellow-800';
+    }
+%>
+
 <!-- Dashboard View -->
 <div id="dashboard-view" class="p-6">
     <div class="flex justify-between items-center mb-6">
@@ -28,15 +44,9 @@
                 <div class="flex items-center justify-between mt-2">
                     <span class="text-sm font-medium"><%= userLeave.leaveType %></span>
                     <span class="inline-flex items-center rounded-full 
-                        <% if (userLeave.status === 'Disetujui') { %> 
-                            bg-green-100 text-green-800 
-                        <% } else if (userLeave.status === 'Ditolak') { %> 
-                            bg-red-100 text-red-800 
-                        <% } else { %> 
-                            bg-yellow-100 text-yellow-800 
-                        <% } %>
+                        <%= statusBadgeColor(userLeave.status) %>
                         px-2 py-0.5 text-xs font-medium">
-                        <%= userLeave.status %>
+                        <%= translateStatus(userLeave.status) %>
                     </span>
                 </div>
                 <p class="text-xs text-muted-foreground mt-1">
@@ -78,7 +88,7 @@
         <div class="bg-white p-4 rounded-md shadow-sm border border-gray-200">
             <h2 class="text-xl font-semibold mb-1">Recent Hires</h2>
             <p class="text-gray-500 text-sm mb-4">New employees in the last 30 days</p>
-            
+
             <% if (recentHires.length > 0) { %>
                 <div class="space-y-4" data-dashboard-recent-hires></div>
                 <div data-dashboard-no-recent-hires class="hidden text-center py-4 text-gray-500">
