@@ -68,14 +68,10 @@ export const getLeavesByEmployeeId = async (req, res) => {
                 DATE_FORMAT(c.tanggal_Selesai, '%Y-%m-%d') AS endDate,
                 DATEDIFF(c.tanggal_Selesai, c.tanggal_Mulai) + 1 AS days,
                 c.keterangan_Cuti AS reason,
-                CASE
-                    WHEN c.keterangan_Cuti LIKE '%Sakit%' THEN 'Sick'
-                    WHEN c.keterangan_Cuti LIKE '%Ijin%' THEN 'Personal'
-                    ELSE 'Annual'
-                END AS type,
+                c.leaveType AS type,
                 c.status,
                 k.email AS contactInfo,
-                '' AS rejectionReason
+                c.rejectionReason
             FROM Cuti c
             JOIN Karyawan k ON c.employeeID = k.employeeID
             WHERE c.employeeID = ?
