@@ -1,5 +1,31 @@
+<div
+	id="sidebar-overlay"
+	class="fixed inset-0 bg-black opacity-50 z-20 hidden lg:hidden"
+></div>
+
+<!-- Hamburger Button for Mobile -->
+<button
+	id="sidebar-toggle"
+	class="fixed top-4 right-4 z-30 lg:hidden bg-white p-2 rounded-md shadow-md"
+>
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		class="h-6 w-6 text-gray-700"
+		fill="none"
+		viewBox="0 0 24 24"
+		stroke="currentColor"
+	>
+		<path
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			stroke-width="2"
+			d="M4 6h16M4 12h16M4 18h16"
+		/>
+	</svg>
+</button>
 <nav
-	class="fixed w-64 bg-[#f8f5e4] border-r border-gray-200 flex flex-col min-h-screen"
+	id="sidebar"
+	class="fixed w-64 bg-[#f8f5e4] border-r border-gray-200 flex flex-col min-h-screen z-30 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out"
 >
 	<!-- User Profile Section -->
 	<div
@@ -299,49 +325,47 @@
 			<div id="employee-submenu" class="pl-10 mt-1 hidden">
 				<!-- Menu All Employees -->
 				<a
-				  href="/allemployees"
-				  class="flex items-center space-x-3 text-gray-700 hover:bg-gray-200 px-2 py-2 rounded-md"
+					href="/allemployees"
+					class="flex items-center space-x-3 text-gray-700 hover:bg-gray-200 px-2 py-2 rounded-md"
 				>
-				  <svg
-					xmlns="http://www.w3.org/2000/svg"
-					class="h-5 w-5 text-gray-600"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				  >
-					<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-					<circle cx="12" cy="7" r="4"></circle>
-				  </svg>
-				  <span>All Employees</span>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="h-5 w-5 text-gray-600"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+						<circle cx="12" cy="7" r="4"></circle>
+					</svg>
+					<span>All Employees</span>
 				</a>
-			  
+
 				<!-- Menu Add Employee -->
 				<a
-				  id="add-employee-menu"
-				  href="/addemployee"
-				  class="flex items-center space-x-3 text-gray-700 hover:bg-gray-200 px-2 py-2 rounded-md"
+					id="add-employee-menu"
+					href="/addemployee"
+					class="flex items-center space-x-3 text-gray-700 hover:bg-gray-200 px-2 py-2 rounded-md"
 				>
-				  <svg
-					xmlns="http://www.w3.org/2000/svg"
-					class="h-5 w-5 text-gray-600"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				  >
-					<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-					<circle cx="12" cy="7" r="4"></circle>
-				  </svg>
-				  <span>Add Employee</span>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="h-5 w-5 text-gray-600"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+						<circle cx="12" cy="7" r="4"></circle>
+					</svg>
+					<span>Add Employee</span>
 				</a>
-			  </div>
-			  						
-			  
+			</div>
 		</div>
 
 		<div class="px-4 py-2">
