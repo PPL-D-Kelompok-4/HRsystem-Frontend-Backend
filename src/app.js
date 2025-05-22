@@ -103,6 +103,10 @@ app.get("/salary", (req, res) => {
 	res.render("salary");
 });
 
+app.get("/managesalary", (req, res) => {
+	res.render("managesalary");
+});
+
 // app.get("/testing", (req, res) => {
 // 	res.render("dashboardEmployee");
 // });
