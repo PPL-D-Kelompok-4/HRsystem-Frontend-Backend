@@ -77,8 +77,8 @@ const App = {
 	formatTime(timeString) {
 		if (!timeString) return "-";
 		const [hours, minutes] = timeString.split(":");
-		const h = parseInt(hours) % 12 || 12;
-		const ampm = parseInt(hours) < 12 ? "AM" : "PM";
+		const h = Number.parseInt(hours) % 12 || 12;
+		const ampm = Number.parseInt(hours) < 12 ? "AM" : "PM";
 		return `${h}:${minutes} ${ampm}`;
 	},
 
@@ -89,10 +89,10 @@ const App = {
 		const [outHours, outMinutes] = checkOut.split(":");
 
 		const inTime = new Date();
-		inTime.setHours(parseInt(inHours), parseInt(inMinutes), 0);
+		inTime.setHours(Number.parseInt(inHours), Number.parseInt(inMinutes), 0);
 
 		const outTime = new Date();
-		outTime.setHours(parseInt(outHours), parseInt(outMinutes), 0);
+		outTime.setHours(Number.parseInt(outHours), Number.parseInt(outMinutes), 0);
 
 		const diffMs = outTime - inTime;
 		const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
@@ -349,12 +349,12 @@ const App = {
 
 		if (history.length === 0) {
 			tableBody.innerHTML = `
-                <tr>
-                    <td colspan="4" class="text-center py-4 text-gray-500">
-                        No recent attendance records.
-                    </td>
-                </tr>
-            `;
+				  <tr>
+					  <td colspan="4" class="text-center py-4 text-gray-500">
+						  No recent attendance records.
+					  </td>
+				  </tr>
+			  `;
 			return;
 		}
 
@@ -364,23 +364,23 @@ const App = {
 			tr.className = "hover:bg-gray-100";
 
 			tr.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap">${new Date(
-									record.tanggal
-								).toLocaleDateString("en-US", {
-									year: "numeric",
-									month: "short",
-									day: "numeric",
-								})}</td>
-                <td class="px-6 py-4 whitespace-nowrap">${
-									record.jam_Masuk ? record.jam_Masuk.slice(0, 5) : "-"
-								}</td>
-                <td class="px-6 py-4 whitespace-nowrap">${
-									record.jam_Keluar ? record.jam_Keluar.slice(0, 5) : "-"
-								}</td>
-                <td class="px-6 py-4 whitespace-nowrap">${
-									record.status || "-"
-								}</td>
-            `;
+	  <td class="px-2 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">${new Date(
+			record.tanggal
+		).toLocaleDateString("en-US", {
+			year: "numeric",
+			month: "short",
+			day: "numeric",
+		})}</td>
+	  <td class="px-2 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">${
+			record.jam_Masuk ? record.jam_Masuk.slice(0, 5) : "-"
+		}</td>
+	  <td class="px-2 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">${
+			record.jam_Keluar ? record.jam_Keluar.slice(0, 5) : "-"
+		}</td>
+	  <td class="px-2 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">${
+			record.status || "-"
+		}</td>
+  `;
 			tableBody.appendChild(tr);
 		});
 	},
@@ -393,12 +393,12 @@ const App = {
 
 		if (history.length === 0) {
 			tableBody.innerHTML = `
-                <tr>
-                    <td colspan="4" class="text-center py-4 text-gray-500">
-                        No attendance records found.
-                    </td>
-                </tr>
-            `;
+				  <tr>
+					  <td colspan="4" class="text-center py-4 text-gray-500">
+						  No attendance records found.
+					  </td>
+				  </tr>
+			  `;
 			return;
 		}
 
@@ -407,32 +407,43 @@ const App = {
 			tr.className = "hover:bg-gray-100"; // optional: biar ada efek hover
 
 			tr.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap">${new Date(
-									record.tanggal
-								).toLocaleDateString("en-US", {
-									year: "numeric",
-									month: "short",
-									day: "numeric",
-								})}</td>
-                <td class="px-6 py-4 whitespace-nowrap">${
-									record.jam_Masuk ? record.jam_Masuk.slice(0, 5) : "-"
-								}</td>
-                <td class="px-6 py-4 whitespace-nowrap">${
-									record.jam_Keluar ? record.jam_Keluar.slice(0, 5) : "-"
-								}</td>
-                <td class="px-6 py-4 whitespace-nowrap">${
-									record.status || "-"
-								}</td>
-            `;
+	  <td class="px-2 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">${new Date(
+			record.tanggal
+		).toLocaleDateString("en-US", {
+			year: "numeric",
+			month: "short",
+			day: "numeric",
+		})}</td>
+	  <td class="px-2 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">${
+			record.jam_Masuk ? record.jam_Masuk.slice(0, 5) : "-"
+		}</td>
+	  <td class="px-2 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">${
+			record.jam_Keluar ? record.jam_Keluar.slice(0, 5) : "-"
+		}</td>
+	  <td class="px-2 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">${
+			record.status || "-"
+		}</td>
+  `;
 			tableBody.appendChild(tr);
 		});
 	},
 };
 
+function updateTableHeadersResponsiveness() {
+	// Make table headers responsive
+	const tableHeaders = document.querySelectorAll("th");
+	tableHeaders.forEach((header) => {
+		header.classList.remove("px-6");
+		header.classList.add("px-2", "sm:px-6", "py-2", "sm:py-3", "text-xs");
+	});
+}
+
+// Call this function when opening the modal
 function openModal() {
 	const modal = document.getElementById("attendanceHistoryModal");
 	if (modal) {
 		modal.classList.remove("hidden");
+		updateTableHeadersResponsiveness();
 	}
 }
 
