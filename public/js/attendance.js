@@ -14,7 +14,7 @@ const App = {
 
 	async init() {
 		try {
-			const response = await fetch("http://localhost:3000/api/auth/me", {
+			const response = await fetch("/api/auth/me", {
 				method: "GET",
 				headers: {
 					"Content-Type": "application/json",
@@ -210,7 +210,7 @@ const App = {
 					timerProgressBar: true,
 				});
 
-				await this.loadTodayAttendance(); // ← 🔥 reload status dari server
+				await this.loadTodayAttendance();
 			} else {
 				Swal.fire({
 					icon: "error",
@@ -441,15 +441,20 @@ function updateTableHeadersResponsiveness() {
 // Call this function when opening the modal
 function openModal() {
 	const modal = document.getElementById("attendanceHistoryModal");
+	const bgOverlay = document.querySelector(".bg-overlay");
+
 	if (modal) {
 		modal.classList.remove("hidden");
+		bgOverlay.classList.remove("hidden");
 		updateTableHeadersResponsiveness();
 	}
 }
 
 function closeModal() {
+	const bgOverlay = document.querySelector(".bg-overlay");
 	const modal = document.getElementById("attendanceHistoryModal");
 	if (modal) {
+		bgOverlay.classList.add("hidden");
 		modal.classList.add("hidden");
 	}
 }

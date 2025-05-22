@@ -6,6 +6,14 @@ leaveToggleBtn.addEventListener("click", () => {
 	leaveSubmenu.classList.toggle("hidden");
 });
 
+// Toggle Salary Submenu
+const salaryToggleBtn = document.getElementById("salary-toggle");
+const salarySubmenu = document.getElementById("salary-submenu");
+
+salaryToggleBtn.addEventListener("click", () => {
+	salarySubmenu.classList.toggle("hidden");
+});
+
 // Toggle Employee Submenu
 const employeeToggleBtn = document.getElementById("employee-toggle");
 const employeeSubmenu = document.getElementById("employee-submenu");
@@ -92,8 +100,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 			addEmployeeMenuItem.classList.add("hidden");
 		}
 
-		// Tampilkan menu Reports hanya jika departmentID = 4
-		if (Number(user.departmentID) !== 4 && reportsMenuItem) {
+		// Tampilkan menu Reports hanya jika departmentID = 1
+		if (Number(user.departmentID) !== 1 && reportsMenuItem) {
 			reportsMenuItem.classList.add("hidden");
 		}
 	} catch (error) {
