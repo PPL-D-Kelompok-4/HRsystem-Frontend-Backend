@@ -104,7 +104,7 @@ app.get("/salary", (req, res) => {
 });
 
 app.get("/managesalary", (req, res) => {
-	res.render("manageSalary");
+	res.render("managesalary");
 });
 
 // app.get("/testing", (req, res) => {

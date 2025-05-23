@@ -363,6 +363,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	function openModal(request) {
+		const bgOverlay = document.querySelector(".bg-overlay");
+		bgOverlay.classList.remove("hidden");
 		modal.classList.remove("hidden");
 		for (const key in request) {
 			const el = modal.querySelector(`[data-bind="${key}"]`);
