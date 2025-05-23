@@ -36,6 +36,11 @@ import { authenticate } from "./middlewares/authMiddleware.js";
 // Create Express app
 const app = express();
 
+// Trust proxy in production if behind a reverse proxy like on Railway
+if (process.env.NODE_ENV === "production") {
+	app.set("trust proxy", 1); // Percayai proxy pertama. Sesuaikan jika ada lebih banyak lapisan proxy.
+}
+
 // Set EJS as view engine
 app.set("view engine", "ejs");
 app.use(expressLayouts);
