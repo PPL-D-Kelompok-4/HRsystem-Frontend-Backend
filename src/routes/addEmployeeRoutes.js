@@ -40,7 +40,7 @@ router.post("/", async (req, res) => {
 		const token = req.cookies.token;
 
 		// Fetch departments
-		const deptRes = await fetch(`http://localhost:3000/api/departments`, {
+		const deptRes = await fetch(`/api/departments`, {
 			method: "GET",
 			headers: {
 				Authorization: `Bearer ${token}`,
@@ -62,7 +62,7 @@ router.post("/", async (req, res) => {
 		}
 
 		// Fetch positions
-		const posRes = await fetch(`http://localhost:3000/api/positions`, {
+		const posRes = await fetch(`/api/positions`, {
 			method: "GET",
 			headers: {
 				Authorization: `Bearer ${token}`,
@@ -84,7 +84,7 @@ router.post("/", async (req, res) => {
 		}
 
 		// POST ke API employees (buat employee baru)
-		const createRes = await fetch(`http://localhost:3000/api/employees`, {
+		const createRes = await fetch(`/api/employees`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

@@ -113,7 +113,7 @@ document.getElementById("saveProfileBtn").addEventListener("click", () => {
 // Init on page load
 document.addEventListener("DOMContentLoaded", async () => {
 	try {
-		const response = await fetch("http://localhost:3000/api/auth/me", {
+		const response = await fetch("/api/auth/me", {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",

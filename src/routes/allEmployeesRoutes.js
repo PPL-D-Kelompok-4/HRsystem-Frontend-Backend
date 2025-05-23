@@ -10,7 +10,7 @@ router.get(
 	async (req, res) => {
 		try {
 			const token = req.cookies.token;
-			const response = await fetch("http://localhost:3000/api/employees", {
+			const response = await fetch("/api/employees", {
 				method: "GET",
 				headers: {
 					"Content-Type": "application/json",
@@ -52,17 +52,14 @@ router.put("/:employeeId/status", async (req, res) => {
 		const { employeeId } = req.params;
 		const { status_Karyawan } = req.body;
 
-		const response = await fetch(
-			`http://localhost:3000/api/employees/${employeeId}/status`,
-			{
-				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: req.headers.authorization || "",
-				},
-				body: JSON.stringify({ status_Karyawan }),
-			}
-		);
+		const response = await fetch(`/api/employees/${employeeId}/status`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: req.headers.authorization || "",
+			},
+			body: JSON.stringify({ status_Karyawan }),
+		});
 
 		const result = await response.json();
 
@@ -79,134 +76,127 @@ router.put("/:employeeId/status", async (req, res) => {
 
 // Edit Employee Page
 router.get("/edit/:employeeId", async (req, res) => {
-    try {
-        const { employeeId } = req.params;
-        const token = req.cookies.token;
+	try {
+		const { employeeId } = req.params;
+		const token = req.cookies.token;
 
-        if (!token) {
-            return res.redirect("/login"); // Kalau belum login, redirect
-        }
+		if (!token) {
+			return res.redirect("/login"); // Kalau belum login, redirect
+		}
 
-        const response = await fetch(
-            `http://localhost:3000/api/employees/${employeeId}`,
-            {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
+		const response = await fetch(`/api/employees/${employeeId}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			},
+		});
 
-        if (!response.ok) {
-            return res.status(404).send("Employee not found");
-        }
+		if (!response.ok) {
+			return res.status(404).send("Employee not found");
+		}
 
-        const employee = await response.json();
+		const employee = await response.json();
 
-        const nameParts = employee.nama.split(" ");
-        employee.firstName = nameParts[0];
-        employee.lastName = nameParts.slice(1).join(" ");
+		const nameParts = employee.nama.split(" ");
+		employee.firstName = nameParts[0];
+		employee.lastName = nameParts.slice(1).join(" ");
 
-        employee.id = employee.employeeID;
+		employee.id = employee.employeeID;
 
-        if (employee && employee.tanggal_Bergabung) {
-            employee.tanggal_Bergabung = new Date(employee.tanggal_Bergabung);
-        }
+		if (employee && employee.tanggal_Bergabung) {
+			employee.tanggal_Bergabung = new Date(employee.tanggal_Bergabung);
+		}
 
-        res.render("addEmployee", {
-            mode: "edit",
-            employee,
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("Server Error");
-    }
+		res.render("addEmployee", {
+			mode: "edit",
+			employee,
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).send("Server Error");
+	}
 });
-
 
 // Submit Edit Employee
 router.post("/edit/:employeeId", async (req, res) => {
-    try {
-        const { employeeId } = req.params;
-        const {
-            firstName,
-            lastName,
-            email,
-            phone,
-            department,
-            position,
-            startDate,
-        } = req.body;
+	try {
+		const { employeeId } = req.params;
+		const {
+			firstName,
+			lastName,
+			email,
+			phone,
+			department,
+			position,
+			startDate,
+		} = req.body;
 
-        const fullName = `${firstName} ${lastName}`;
+		const fullName = `${firstName} ${lastName}`;
 
-        const token = req.cookies.token; // <<< ambil token dari cookie
+		const token = req.cookies.token; // <<< ambil token dari cookie
 
-        // Fetch departmentID
-        const deptRes = await fetch(`http://localhost:3000/api/departments`, {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`, // <<< pakai token
-            },
-        });
-        const departmentsData = await deptRes.json();
-        const departments = departmentsData.data || departmentsData;
+		// Fetch departmentID
+		const deptRes = await fetch(`/api/departments`, {
+			method: "GET",
+			headers: {
+				Authorization: `Bearer ${token}`, // <<< pakai token
+			},
+		});
+		const departmentsData = await deptRes.json();
+		const departments = departmentsData.data || departmentsData;
 
-        // Fetch positionID
-        const posRes = await fetch(`http://localhost:3000/api/positions`, {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`, // <<< pakai token
-            },
-        });
-        const positionsData = await posRes.json();
-        const positions = positionsData.data || positionsData;
+		// Fetch positionID
+		const posRes = await fetch(`/api/positions`, {
+			method: "GET",
+			headers: {
+				Authorization: `Bearer ${token}`, // <<< pakai token
+			},
+		});
+		const positionsData = await posRes.json();
+		const positions = positionsData.data || positionsData;
 
-        if (!Array.isArray(departments) || !Array.isArray(positions)) {
-            console.error("Invalid departments or positions data.");
-            return res.status(500).send("Failed to fetch departments or positions");
-        }
+		if (!Array.isArray(departments) || !Array.isArray(positions)) {
+			console.error("Invalid departments or positions data.");
+			return res.status(500).send("Failed to fetch departments or positions");
+		}
 
-        const dept = departments.find((dep) => dep.nama_Departemen === department);
-        const departmentID = dept?.departmentID;
+		const dept = departments.find((dep) => dep.nama_Departemen === department);
+		const departmentID = dept?.departmentID;
 
-        const pos = positions.find((p) => p.nama_Jabatan === position);
-        const positionID = pos?.PositionID;
+		const pos = positions.find((p) => p.nama_Jabatan === position);
+		const positionID = pos?.PositionID;
 
-        if (!departmentID || !positionID) {
-            return res.status(400).send("Invalid department or position");
-        }
+		if (!departmentID || !positionID) {
+			return res.status(400).send("Invalid department or position");
+		}
 
-        const response = await fetch(
-            `http://localhost:3000/api/employees/${employeeId}`,
-            {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`, // <<< pakai token
-                },
-                body: JSON.stringify({
-                    nama: fullName,
-                    email,
-                    no_Telp: phone,
-                    departmentID,
-                    positionID,
-                    tanggal_Bergabung: startDate,
-                }),
-            }
-        );
+		const response = await fetch(`/api/employees/${employeeId}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`, // <<< pakai token
+			},
+			body: JSON.stringify({
+				nama: fullName,
+				email,
+				no_Telp: phone,
+				departmentID,
+				positionID,
+				tanggal_Bergabung: startDate,
+			}),
+		});
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            return res.status(response.status).json(errorData);
-        }
+		if (!response.ok) {
+			const errorData = await response.json();
+			return res.status(response.status).json(errorData);
+		}
 
-        res.status(200).json({ success: true });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("Failed to update employee");
-    }
+		res.status(200).json({ success: true });
+	} catch (error) {
+		console.error(error);
+		res.status(500).send("Failed to update employee");
+	}
 });
 
 // Delete Employee
@@ -214,16 +204,13 @@ router.delete("/:employeeId", async (req, res) => {
 	try {
 		const { employeeId } = req.params;
 
-		const response = await fetch(
-			`http://localhost:3000/api/employees/${employeeId}`,
-			{
-				method: "DELETE",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: req.headers.authorization || "",
-				},
-			}
-		);
+		const response = await fetch(`/api/employees/${employeeId}`, {
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: req.headers.authorization || "",
+			},
+		});
 
 		const result = await response.json();
 
