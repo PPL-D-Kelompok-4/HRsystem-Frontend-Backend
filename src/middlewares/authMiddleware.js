@@ -28,7 +28,7 @@ const handleUnauthenticated = (req, res) => {
 	if (req.headers.accept && req.headers.accept.includes("application/json")) {
 		return res.status(401).json({ message: "Authentication required" });
 	} else {
-		return res.redirect("/login");
+		return res.redirect("/");
 	}
 };
 
