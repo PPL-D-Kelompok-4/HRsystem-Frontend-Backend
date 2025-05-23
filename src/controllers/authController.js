@@ -50,7 +50,8 @@ export const login = async (req, res) => {
 
 		res.cookie("token", token, {
 			httpOnly: true, // Aman, hanya bisa dibaca server
-			secure: process.env.NODE_ENV === "development", // Hanya HTTPS di production
+			secure: process.env.NODE_ENV === "production", // benar: hanya true di production
+			sameSite: "lax", // untuk hindari blocking di browser modern
 			maxAge: 24 * 60 * 60 * 1000, // 1 hari
 		});
 
