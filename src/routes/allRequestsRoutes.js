@@ -6,7 +6,7 @@ const router = express.Router();
 router.get("/", authenticate, async (req, res) => {
 	try {
 		const token = req.cookies.token;
-		const baseURL = `${req.protocol}://${req.get("host")}`;
+		const baseURL = process.env.BASE_URL;
 
 		let fetchUrl = "";
 		if (req.user.departmentID === 1) {

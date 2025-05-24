@@ -7,7 +7,7 @@ const router = express.Router();
 router.get("/", authenticate, async (req, res) => {
 	try {
 		const token = req.cookies.token;
-		const baseURL = `${req.protocol}://${req.get("host")}`;
+		const baseURL = process.env.BASE_URL;
 
 		const response = await fetch(`${baseURL}/api/employees`, {
 			method: "GET",
@@ -53,7 +53,7 @@ router.put("/:employeeId/status", async (req, res) => {
 	try {
 		const { employeeId } = req.params;
 		const { status_Karyawan } = req.body;
-		const baseURL = `${req.protocol}://${req.get("host")}`;
+		const baseURL = process.env.BASE_URL;
 
 		const response = await fetch(
 			`${baseURL}/api/employees/${employeeId}/status`,
@@ -85,7 +85,7 @@ router.get("/edit/:employeeId", async (req, res) => {
 	try {
 		const { employeeId } = req.params;
 		const token = req.cookies.token;
-		const baseURL = `${req.protocol}://${req.get("host")}`;
+		const baseURL = process.env.BASE_URL;
 
 		if (!token) {
 			return res.redirect("/login");
@@ -139,7 +139,7 @@ router.post("/edit/:employeeId", async (req, res) => {
 		} = req.body;
 		const fullName = `${firstName} ${lastName}`;
 		const token = req.cookies.token;
-		const baseURL = `${req.protocol}://${req.get("host")}`;
+		const baseURL = process.env.BASE_URL;
 
 		// Fetch departments
 		const deptRes = await fetch(`${baseURL}/api/departments`, {
@@ -208,7 +208,7 @@ router.post("/edit/:employeeId", async (req, res) => {
 router.delete("/:employeeId", async (req, res) => {
 	try {
 		const { employeeId } = req.params;
-		const baseURL = `${req.protocol}://${req.get("host")}`;
+		const baseURL = process.env.BASE_URL;
 
 		const response = await fetch(`${baseURL}/api/employees/${employeeId}`, {
 			method: "DELETE",

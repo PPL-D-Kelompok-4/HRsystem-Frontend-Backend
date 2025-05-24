@@ -37,7 +37,7 @@ router.post("/", async (req, res) => {
 		const fullName = `${firstName} ${lastName}`;
 		const password = generateRandomPassword();
 		const token = req.cookies.token;
-		const baseURL = `${req.protocol}://${req.get("host")}`;
+		const baseURL = process.env.BASE_URL;
 
 		// Fetch departments
 		const deptRes = await fetch(`${baseURL}/api/departments`, {
