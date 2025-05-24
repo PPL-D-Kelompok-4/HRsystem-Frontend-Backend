@@ -6,14 +6,15 @@ const router = express.Router();
 router.get("/", authenticate, async (req, res) => {
 	try {
 		const token = req.cookies.token;
+		const baseURL = `${req.protocol}://${req.get("host")}`;
 
 		let fetchUrl = "";
 		if (req.user.departmentID === 1) {
 			// HR: ambil semua
-			fetchUrl = "/api/leaves";
+			fetchUrl = `${baseURL}/api/leaves`;
 		} else {
 			// User biasa: hanya ambil leave milik dia sendiri
-			fetchUrl = `/api/leaves/employee/${req.user.id}`;
+			fetchUrl = `${baseURL}/api/leaves/employee/${req.user.id}`;
 		}
 
 		const response = await fetch(fetchUrl, {
@@ -23,6 +24,11 @@ router.get("/", authenticate, async (req, res) => {
 				Authorization: `Bearer ${token}`,
 			},
 		});
+
+		if (!response.ok) {
+			console.error("Leave API error:", await response.text());
+			throw new Error(`Failed to fetch leaves: ${response.status}`);
+		}
 
 		const apiLeaves = await response.json();
 		const leaveRequests = Array.isArray(apiLeaves)
@@ -44,14 +50,14 @@ router.get("/", authenticate, async (req, res) => {
 
 		res.render("allRequests", {
 			leaveRequests,
-			user: req.user, // 🔥 tambah ini!
+			user: req.user,
 			title: "HR System",
 		});
 	} catch (error) {
 		console.error("Failed to fetch leaves:", error.message);
 		res.render("allRequests", {
 			leaveRequests: [],
-			user: req.user, // tetap kirim, walau kosong
+			user: req.user,
 			title: "HR System",
 		});
 	}
