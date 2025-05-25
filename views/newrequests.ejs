@@ -1,71 +1,120 @@
 <!-- New Request Form -->
 <div id="new-request-view" class="p-6">
-    <div class="flex justify-between items-center mb-6">
-        <div>
-            <h1 class="text-3xl font-semibold text-gray-800">New Leave Request</h1>
-            <p class="text-gray-500">Submit a new leave request</p>
-        </div>
-    </div>
+	<div class="flex justify-between items-center mb-6">
+		<div>
+			<h1 class="text-3xl font-semibold text-gray-800">New Leave Request</h1>
+			<p class="text-gray-500">Submit a new leave request</p>
+		</div>
+	</div>
 
-    <div class="bg-white p-6 rounded-md shadow-sm border border-gray-200">
-        <form id="new-request-form" class="space-y-6">
-            <div>
-                <label for="leaveType" class="block text-sm font-medium text-gray-700">Leave Type</label>
-                <div class="relative mt-1">
-                    <select id="leaveType" name="leaveType" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-black focus:border-black sm:text-sm rounded-md appearance-none" required>
-                        <option value="">Select leave type</option>
-                        <option value="Annual Leave">Annual Leave</option>
-                        <option value="Sick Leave">Sick Leave</option>
-                        <option value="Personal Leave">Personal Leave</option>
-                    </select>
-                    <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
-                    </div>
-                </div>
-            </div>
+	<div class="bg-white p-6 rounded-md shadow-sm border border-gray-200">
+		<form id="new-request-form" class="space-y-6">
+			<div>
+				<label for="leaveType" class="block text-sm font-medium text-gray-700"
+					>Leave Type</label
+				>
+				<div class="relative mt-1">
+					<select
+						id="leaveType"
+						name="leaveType"
+						class="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-black focus:border-black sm:text-sm rounded-md appearance-none"
+						required
+					>
+						<option value="">Select leave type</option>
+						<option value="Annual Leave">Annual Leave</option>
+						<option value="Sick Leave">Sick Leave</option>
+						<option value="Personal Leave">Personal Leave</option>
+					</select>
+					<div
+						class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none"
+					>
+						<svg
+							class="h-5 w-5 text-gray-400"
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 20 20"
+							fill="currentColor"
+						>
+							<path
+								fill-rule="evenodd"
+								d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+								clip-rule="evenodd"
+							/>
+						</svg>
+					</div>
+				</div>
+			</div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label for="startDate" class="block text-sm font-medium text-gray-700">Start Date</label>
-                    <div class="mt-1">
-                        <input type="date" id="startDate" name="startDate" required class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black sm:text-sm" />
-                    </div>
-                </div>
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+				<div>
+					<label for="startDate" class="block text-sm font-medium text-gray-700"
+						>Start Date</label
+					>
+					<div class="mt-1">
+						<input
+							type="date"
+							id="startDate"
+							name="startDate"
+							required
+							class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black sm:text-sm"
+						/>
+					</div>
+				</div>
 
-                <div>
-                    <label for="endDate" class="block text-sm font-medium text-gray-700">End Date</label>
-                    <div class="mt-1">
-                        <input type="date" id="endDate" name="endDate" required class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black sm:text-sm" />
-                    </div>
-                </div>
-            </div>
+				<div>
+					<label for="endDate" class="block text-sm font-medium text-gray-700"
+						>End Date</label
+					>
+					<div class="mt-1">
+						<input
+							type="date"
+							id="endDate"
+							name="endDate"
+							required
+							class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black sm:text-sm"
+						/>
+					</div>
+				</div>
+			</div>
 
-            <div>
-                <label for="reason" class="block text-sm font-medium text-gray-700">Reason</label>
-                <textarea id="reason" name="reason" rows="3" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black sm:text-sm"></textarea>
-            </div>
+			<div>
+				<label for="reason" class="block text-sm font-medium text-gray-700"
+					>Reason</label
+				>
+				<textarea
+					id="reason"
+					name="reason"
+					rows="3"
+					required
+					class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black sm:text-sm"
+				></textarea>
+			</div>
 
-            <!-- <div>
+			<!-- <div>
                 <label for="contactInfo" class="block text-sm font-medium text-gray-700">Contact Information During Leave</label>
                 <input type="text" id="contactInfo" name="contactInfo" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black sm:text-sm" />
             </div> -->
 
-            <div class="flex justify-end">
-                <button type="button" id="cancel-new-request" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black">
-                    Cancel
-                </button>
-                <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black">
-                    Submit Request
-                </button>
-            </div>
-        </form>
-    </div>
+			<div class="flex justify-end">
+				<button
+					type="button"
+					id="cancel-new-request"
+					class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+				>
+					Cancel
+				</button>
+				<button
+					type="submit"
+					class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+				>
+					Submit Request
+				</button>
+			</div>
+		</form>
+	</div>
 </div>
 
 <script>
-    window.currentUser = <%- JSON.stringify(user) %>;
+	window.currentUser = <%- JSON.stringify(user) %>;
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="/js/newRequests.js"></script>
+<script src="/js/newrequests.js"></script>
