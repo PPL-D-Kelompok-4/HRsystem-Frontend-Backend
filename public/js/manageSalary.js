@@ -22,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const statusFilter = document.querySelector('select[name="status"]');
     const searchInput = document.querySelector('input[name="search"]');
 
-    // Constants for status mapping (Display vs. Database)
     const STATUS_PAID_DB = "Lunas";
     const STATUS_PENDING_DB = "Belum Lunas";
     const STATUS_PAID_DISPLAY = "Paid";
@@ -76,7 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
         tbody.innerHTML = '';
         data.forEach(payroll => {
             const row = document.createElement('tr');
-            // Ganti payroll.employeeID dengan payroll.nama_Jabatan
             row.innerHTML = `
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${payroll.employee_name}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${payroll.nama_Jabatan || 'N/A'}</td>
@@ -110,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (department && department !== "Select Department") params.append("department", department);
         
         if (statusQuery && statusQuery !== "All Status") {
-             params.append("status", statusQuery);
+            params.append("status", statusQuery);
         }
 
         if (search) params.append("search", search);
@@ -125,7 +123,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     tbody.addEventListener("click", async (e) => {
-        // Memastikan target klik adalah button atau SVG di dalam button
         const editButton = e.target.closest("button.edit-salary");
         if (editButton) {
             const id = editButton.dataset.id;
