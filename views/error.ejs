@@ -1,0 +1,9 @@
+<h1>Oops! Something went wrong.</h1>
+<p><%- message %></p>
+<% if (error && error.status) { %>
+    <p>Status: <%- error.status %></p>
+<% } %>
+<% if (process.env.NODE_ENV === 'development' && error && error.stack) { %>
+    <pre style="text-align: left; background-color: #eee; padding: 10px; border-radius: 3px; white-space: pre-wrap; word-wrap: break-word;"><%- error.stack %></pre>
+<% } %>
+<p><a href="/">Go to Homepage</a></p>
