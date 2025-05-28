@@ -99,8 +99,8 @@ app.get("/attendance", authenticate, (req, res) => {
 });
 
 app.get("/newrequests", authenticate, (req, res) => {
-	res.render("newRequests", {
-		title: "HR System - New Requests",
+	res.render("newrequests", {
+		title: "HR System",
 		user: req.user,
 	});
 });

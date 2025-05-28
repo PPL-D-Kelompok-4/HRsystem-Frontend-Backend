@@ -2,7 +2,6 @@ import express from "express";
 
 const router = express.Router();
 
-// function untuk generate random password
 function generateRandomPassword(length = 8) {
 	const chars =
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -13,7 +12,7 @@ function generateRandomPassword(length = 8) {
 	return password;
 }
 
-// route GET tampilkan form add
+// Tampilkan form tambah
 router.get("/", (req, res) => {
 	res.render("addEmployee", {
 		mode: "add",
@@ -22,7 +21,7 @@ router.get("/", (req, res) => {
 	});
 });
 
-// route POST simpan employee baru via API
+// Simpan employee baru via API
 router.post("/", async (req, res) => {
 	try {
 		const {
@@ -38,9 +37,10 @@ router.post("/", async (req, res) => {
 		const fullName = `${firstName} ${lastName}`;
 		const password = generateRandomPassword();
 		const token = req.cookies.token;
+		const baseURL = process.env.BASE_URL;
 
 		// Fetch departments
-		const deptRes = await fetch(`http://localhost:3000/api/departments`, {
+		const deptRes = await fetch(`${baseURL}/api/departments`, {
 			method: "GET",
 			headers: {
 				Authorization: `Bearer ${token}`,
@@ -62,7 +62,7 @@ router.post("/", async (req, res) => {
 		}
 
 		// Fetch positions
-		const posRes = await fetch(`http://localhost:3000/api/positions`, {
+		const posRes = await fetch(`${baseURL}/api/positions`, {
 			method: "GET",
 			headers: {
 				Authorization: `Bearer ${token}`,
@@ -83,8 +83,8 @@ router.post("/", async (req, res) => {
 			return res.status(400).json({ message: "Position not found" });
 		}
 
-		// POST ke API employees (buat employee baru)
-		const createRes = await fetch(`http://localhost:3000/api/employees`, {
+		// POST ke API employees
+		const createRes = await fetch(`${baseURL}/api/employees`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

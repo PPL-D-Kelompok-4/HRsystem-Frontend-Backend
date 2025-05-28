@@ -67,10 +67,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const userNameElement = document.getElementById("user-name");
     const addEmployeeMenuItem = document.getElementById("add-employee-menu");
     const reportsMenuItem = document.getElementById("reports-menu");
+    // Menggunakan variabel dari dev-edit
     const manageSalaryMenuItem = document.getElementById("manage-salary-menu");
 
     try {
-        const response = await fetch("http://localhost:3000/api/auth/me", {
+        // Menggunakan URL fetch dari main (relatif path)
+        const response = await fetch("/api/auth/me", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -79,11 +81,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         if (!response.ok) {
+            // Penanganan error yang lebih detail dari dev-edit
             const errorText = await response.text();
             try {
                 const errorJson = JSON.parse(errorText);
                 throw new Error(errorJson.message || "Failed to get user info");
             } catch (e) {
+                // Jika tidak bisa parse JSON, gunakan teks error mentah
                 throw new Error(errorText || "Failed to get user info and could not parse error response");
             }
         }
@@ -99,10 +103,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             Number(user.positionID) === 1 && Number(user.departmentID) === 1;
         console.log("✅ Is user HR Manager:", isHRManager);
 
+        // Sembunyikan menu "Add Employee" jika bukan HR Manager
         if (!isHRManager && addEmployeeMenuItem) {
             addEmployeeMenuItem.classList.add("hidden");
         }
 
+        // Tampilkan/sembunyikan menu Reports (logika gabungan)
         if (reportsMenuItem) {
             if (Number(user.departmentID) !== 1) {
                 reportsMenuItem.classList.add("hidden");
@@ -111,6 +117,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         }
         
+        // Logika untuk manageSalaryMenuItem dari dev-edit
         if (manageSalaryMenuItem) {
             if (Number(user.departmentID) !== 2) {
                 manageSalaryMenuItem.classList.add("hidden");
@@ -121,12 +128,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     } catch (error) {
         console.error("❌ Error fetching user data or controlling menu visibility:", error);
+        // Penanganan error umum yang lebih detail dari dev-edit
         if (error.message.includes("NetworkError") || error.message.includes("fetch")) {
             console.error("⚠️ API might be inaccessible (server down or CORS issue).");
         } else {
             console.error("⚠️ Problem with the response or parsing JSON.");
         }
 
+        // Logika redirect dari dev-edit
         if (window.location.pathname !== "/login" && window.location.pathname !== "/login.html") {
             window.location.href = "/login";
         }
