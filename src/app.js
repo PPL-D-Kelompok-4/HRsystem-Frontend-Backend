@@ -32,6 +32,7 @@ import loginRoutes from "./routes/loginRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import allRequestsRoutes from "./routes/allRequestsRoutes.js";
 import { authenticate } from "./middlewares/authMiddleware.js";
+import { getPayrollsByEmployeeIdForView, downloadAllUserPayrollsPDF } from  "./controllers/payrollController.js"; // Tambahkan downloadAllUserPayrollsPDF
 
 // Create Express app
 const app = express();
@@ -66,6 +67,8 @@ if (process.env.NODE_ENV !== "production") {
 	app.use(morgan("combined"));
 }
 
+app.get('/api/payrolls/download-all-my-payslips', authenticate, downloadAllUserPayrollsPDF);
+
 // Routes
 app.use("/api/departments", departmentRoutes);
 app.use("/api/employees", employeeRoutes);
@@ -89,7 +92,10 @@ app.post("/api/auth/logout", (req, res) => {
 });
 
 app.get("/attendance", authenticate, (req, res) => {
-	res.render("attendance");
+	res.render("attendance", {
+        title: "Attendance",
+        user: req.user
+    });
 });
 
 app.get("/newrequests", authenticate, (req, res) => {
@@ -99,26 +105,62 @@ app.get("/newrequests", authenticate, (req, res) => {
 	});
 });
 
-app.get("/salary", (req, res) => {
-	res.render("salary");
+app.get("/salary", authenticate, async (req, res) => {
+	try {
+		const employeeId = req.user.id;
+		if (!employeeId) {
+			console.error("Employee ID (req.user.id) not found in token for user:", req.user);
+			return res.status(403).render("error", {
+                message: "User identity not found. Please log in again.",
+                error: {status: 403, stack: ""},
+                user: req.user
+            });
+		}
+
+		const paySlips = await getPayrollsByEmployeeIdForView(employeeId);
+
+		res.render("salary", {
+			title: "HR System",
+			user: req.user,
+			paySlips: paySlips
+		});
+	} catch (error) {
+		console.error("Error fetching salary page:", error);
+		res.status(500).render("error", {
+            message: "Server error while loading salary page.",
+            error: error,
+            user: req.user
+        });
+	}
 });
 
-app.get("/managesalary", (req, res) => {
-	res.render("managesalary");
+app.get("/managesalary", authenticate, (req, res) => {
+	res.render("manageSalary", {
+        title: "HR System",
+        user: req.user
+    });
 });
 
 // app.get("/testing", (req, res) => {
 // 	res.render("dashboardEmployee");
 // });
 
+
 app.get("/reports", authenticate, (req, res) => {
-	res.render("reports", { title: "Attendance Reports" });
+	res.render("reports", { 
+        title: "Attendance Reports",
+        user: req.user
+    });
 });
 
 // Handler 404 Not Found
 app.use((req, res, next) => {
 	if (req.accepts("html")) {
-		res.redirect("/");
+		return res.status(404).render("error", {
+            message: "Page Not Found",
+            error: {status: 404, stack: "The page you are looking for does not exist."},
+            user: req.user
+        });
 	} else if (req.accepts("json")) {
 		res.status(404).json({ message: "Not found" });
 	} else {
@@ -128,11 +170,24 @@ app.use((req, res, next) => {
 
 // Error handler
 app.use((err, req, res, next) => {
-	console.error(err.stack);
-	res.status(500).json({
-		message: "Server error",
-		error: err.message,
-	});
+	console.error("Global error handler:",err.stack);
+    const status = err.status || 500;
+    const message = err.message || "Something went wrong on the server.";
+	
+    if (req.accepts("html")) {
+        res.status(status).render("error", {
+            message: message,
+            error: process.env.NODE_ENV === 'development' ? err : {status: status},
+            user: req.user
+        });
+    } else if (req.accepts("json")) {
+		res.status(status).json({
+			message: "Server error",
+			error: err.message,
+		});
+	} else {
+        res.status(status).type("txt").send(message);
+    }
 });
 
 export default app;
