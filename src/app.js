@@ -93,7 +93,7 @@ app.get("/attendance", authenticate, (req, res) => {
 });
 
 app.get("/newrequests", authenticate, (req, res) => {
-	res.render("newRequests", {
+	res.render("newrequests", {
 		title: "HR System",
 		user: req.user,
 	});
@@ -104,7 +104,7 @@ app.get("/salary", (req, res) => {
 });
 
 app.get("/managesalary", (req, res) => {
-	res.render("manageSalary");
+	res.render("managesalary");
 });
 
 // app.get("/testing", (req, res) => {
