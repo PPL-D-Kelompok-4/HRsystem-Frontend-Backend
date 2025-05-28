@@ -145,6 +145,7 @@ app.get("/managesalary", authenticate, (req, res) => {
 // 	res.render("dashboardEmployee");
 // });
 
+
 app.get("/reports", authenticate, (req, res) => {
 	res.render("reports", { 
         title: "Attendance Reports",
