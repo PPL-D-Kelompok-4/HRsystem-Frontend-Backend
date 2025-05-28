@@ -38,10 +38,10 @@ CREATE TABLE IF NOT EXISTS Karyawan (
 CREATE TABLE IF NOT EXISTS Gaji (
   payrollID INT(11) NOT NULL AUTO_INCREMENT,
   employeeID INT(11) NOT NULL,
-  bulan DATE NOT NULL,
-  tahun DATE NOT NULL,
+  periode DATE NOT NULL,
   gaji_Pokok DECIMAL(10,2) NOT NULL,
   tunjangan DECIMAL(10,2) DEFAULT 0,
+  bonus DECIMAL(10,2) DEFAULT 0,
   potongan DECIMAL(10,2) DEFAULT 0,
   total_Gaji DECIMAL(10,2) NOT NULL,
   status_Pembayaran ENUM('Lunas', 'Belum Lunas') NOT NULL DEFAULT 'Belum Lunas',
@@ -149,4 +149,17 @@ VALUES
 (14, '2025-04-24', '2025-06-05', '2025-06-06', 'Menghadiri acara keluarga', 'Diajukan', '-', 'Personal Leave'),
 (15, '2025-04-27', '2025-06-10', '2025-06-12', 'Liburan luar kota', 'Diajukan', '-', 'Annual Leave');
 
-
+-- Dummy Gaji
+INSERT INTO Gaji (
+  employeeID,
+  periode,
+  gaji_Pokok,
+  tunjangan,
+  bonus,
+  potongan,
+  total_Gaji,
+  status_Pembayaran
+) VALUES
+(1, '2025-05-01', 10000000.00, 2000000.00, 1500000.00, 500000.00, 13000000.00, 'Lunas'),
+(2, '2025-05-01', 5000000.00, 1000000.00, 500000.00, 250000.00, 6250000.00, 'Belum Lunas'),
+(3, '2025-05-01', 7000000.00, 1500000.00, 750000.00, 300000.00, 8950000.00, 'Lunas');
