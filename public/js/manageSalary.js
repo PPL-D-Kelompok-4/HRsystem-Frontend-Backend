@@ -101,22 +101,24 @@ document.addEventListener("DOMContentLoaded", () => {
         const params = new URLSearchParams();
         const periode = periodeFilter?.value;
         const department = deptFilter?.value;
-        const statusQuery = statusFilter?.value;
+        const statusQuery = statusFilter?.value; // Renamed for clarity from 'status'
         const search = searchInput?.value;
 
         if (periode && periode !== "Select Period") params.append("periode", periode);
         if (department && department !== "Select Department") params.append("department", department);
-        
+
+        // Make sure to map display status to DB status if they are different
+        // For now, assuming statusQuery directly matches DB values like "Lunas" or "Belum Lunas" if used
         if (statusQuery && statusQuery !== "All Status") {
-            params.append("status", statusQuery);
+            params.append("status", statusQuery); // 'status' is the query param the backend expects
         }
 
         if (search) params.append("search", search);
 
         try {
-            const res = await fetch('/api/payrolls?' + params.toString());
+            const res = await fetch('/api/payrolls?' + params.toString()); // Fetches from the backend
             const data = await res.json();
-            renderSalaries(data);
+            renderSalaries(data); // Calls function to update the table
         } catch (err) {
             console.error('Failed to load salaries:', err);
         }

@@ -135,10 +135,24 @@ app.get("/salary", authenticate, async (req, res) => {
 });
 
 app.get("/managesalary", authenticate, (req, res) => {
-	res.render("manageSalary", {
-        title: "HR System",
-        user: req.user
+  // Periksa apakah pengguna memiliki departmentID yang sesuai (misalnya 2 untuk Finance)
+  if (req.user && req.user.departmentID === 2) {
+    res.render("manageSalary", {
+      title: "Manage Salary | HR System", // Judul yang lebih spesifik bisa membantu
+      user: req.user
     });
+  } else {
+    // Jika tidak, kirim status 403 (Forbidden) dan render halaman error
+    res.status(403).render("error", { // Asumsi Anda memiliki view 'error.ejs'
+      message: "Access Denied",
+      error: {
+        status: 403,
+        stack: "You do not have permission to access this page."
+      },
+      user: req.user, // kirim user agar layout tetap bisa render info user jika ada
+      title: "Access Denied"
+    });
+  }
 });
 
 // app.get("/testing", (req, res) => {

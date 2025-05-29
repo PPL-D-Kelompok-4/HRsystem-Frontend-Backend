@@ -17,7 +17,7 @@ export const getAllPayrolls = async (req, res) => {
       JOIN Departemen d ON k.departmentID = d.departmentID
       JOIN Jabatan j ON k.positionID = j.PositionID
       WHERE 1=1
-    `;
+    `; // Base query fetches all necessary details
     const params = [];
 
     if (periode) {
@@ -25,20 +25,20 @@ export const getAllPayrolls = async (req, res) => {
       params.push(periode);
     }
     if (department) {
-      sql += ' AND d.nama_Departemen = ?';
+      sql += ' AND d.nama_Departemen = ?'; // Filtering by department name
       params.push(department);
     }
     if (status) {
-      sql += ' AND g.status_Pembayaran = ?';
+      sql += ' AND g.status_Pembayaran = ?'; // Filtering by payment status
       params.push(status);
     }
     if (search) {
-      sql += ' AND k.nama LIKE ?';
+      sql += ' AND k.nama LIKE ?'; // Search by employee name
       params.push(`%${search}%`);
     }
     sql += ' ORDER BY g.periode DESC, k.nama ASC';
     const [rows] = await pool.query(sql, params);
-    res.json(rows);
+    res.json(rows); // Returns the salary data as JSON
   } catch (error) {
     console.error('Error fetching filtered payrolls:', error);
     res.status(500).json({ message: 'Server error' });

@@ -1,5 +1,5 @@
 import express from 'express';
-import { 
+import {
   getAllPayrolls,
   getPayrollById,
   getPayrollsByEmployeeId,
@@ -7,41 +7,47 @@ import {
   updatePayroll,
   deletePayroll
 } from '../controllers/payrollController.js';
-import { authenticate, isAdmin } from '../middlewares/authMiddleware.js';
+// Impor middleware baru dan yang sudah ada
+import { authenticate, isAdmin, canViewAllPayrolls, isFinanceOnly } from '../middlewares/authMiddleware.js'; // Tambahkan isFinanceOnly
 import { payrollValidationRules, validate } from '../middlewares/validationMiddleware.js';
 
 const router = express.Router();
 
-// Get all payrolls
-router.get('/', authenticate, isAdmin, getAllPayrolls);
+// Rute untuk melihat semua gaji (bisa diakses HR atau Finance)
+router.get('/', authenticate, canViewAllPayrolls, getAllPayrolls);
 
-// Get payroll by ID
-router.get('/:id', authenticate, getPayrollById);
+// Rute untuk melihat detail gaji (misalnya, HR atau Finance)
+router.get('/:id', authenticate, canViewAllPayrolls, getPayrollById);
 
-// Get payrolls by employee ID
+// Rute untuk melihat gaji per karyawan (bisa karyawan ybs, HR, atau Finance - logika di controller)
 router.get('/employee/:employeeId', authenticate, getPayrollsByEmployeeId);
 
-// Create new payroll
+// Rute untuk membuat gaji baru (misalnya, hanya HR)
 router.post(
-  '/', 
-  authenticate, 
-  isAdmin, 
-  payrollValidationRules.create, 
-  validate, 
+  '/',
+  authenticate,
+  isAdmin, // Hanya HR yang bisa membuat
+  payrollValidationRules.create,
+  validate,
   createPayroll
 );
 
-// Update payroll
+// Rute untuk MENGUPDATE gaji (HANYA FINANCE)
 router.put(
-  '/:id', 
-  authenticate, 
-  isAdmin, 
-  payrollValidationRules.update, 
-  validate, 
+  '/:id',
+  authenticate,
+  isFinanceOnly, // Ganti isAdmin menjadi isFinanceOnly
+  payrollValidationRules.update,
+  validate,
   updatePayroll
 );
 
-// Delete payroll
-router.delete('/:id', authenticate, isAdmin, deletePayroll);
+// Rute untuk menghapus gaji (misalnya, hanya HR)
+router.delete(
+  '/:id',
+  authenticate,
+  isAdmin, // Hanya HR yang bisa menghapus
+  deletePayroll
+);
 
 export default router;
