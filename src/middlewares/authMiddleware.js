@@ -51,3 +51,38 @@ export const isAdmin = (req, res, next) => {
 		res.status(500).json({ message: "Server error" });
 	}
 };
+
+export const canViewAllPayrolls = (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Authentication required." });
+    }
+    // Izinkan jika departmentID adalah 1 (HR) atau 2 (Finance)
+    if (req.user.departmentID === 2) {
+      next();
+    } else {
+      return res.status(403).json({ message: "Access restricted to Finance departments only." });
+    }
+  } catch (error) {
+    console.error("Authorization error (canViewAllPayrolls):", error);
+    res.status(500).json({ message: "Server error during authorization" });
+  }
+};
+
+export const isFinanceOnly = (req, res, next) => {
+  try {
+    if (!req.user) {
+      // Seharusnya sudah ditangani oleh 'authenticate'
+      return res.status(401).json({ message: "Authentication required." });
+    }
+    // Hanya izinkan jika departmentID adalah 2 (Finance)
+    if (req.user.departmentID === 2) {
+      next();
+    } else {
+      return res.status(403).json({ message: "This action is restricted to the Finance department only." });
+    }
+  } catch (error) {
+    console.error("Authorization error (isFinanceOnly):", error);
+    res.status(500).json({ message: "Server error during authorization" });
+  }
+};
