@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Denied</title>
+    <link href="/css/style.css" rel="stylesheet"> <script src="https://cdn.tailwindcss.com"></script> </head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="text-center p-8 bg-white shadow-lg rounded-lg max-w-md w-full">
+        <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-16 w-16 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 1a9 9 0 100 18 9 9 0 000-18zM9 5a1 1 0 00-1 1v5a1 1 0 102 0V6a1 1 0 00-1-1zm1 11a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+        </svg>
+        <h1 class="text-4xl font-bold text-gray-800 mt-4">403</h1>
+        <h2 class="text-2xl font-semibold text-red-600 mt-2">Access Denied</h2>
+        <p class="text-gray-600 mt-4">
+            <% if (typeof message !== 'undefined' && message) { %>
+                <%= message %>
+            <% } else { %>
+                Maaf, Anda tidak memiliki izin untuk mengakses halaman ini.
+            <% } %>
+        </p>
+        <p class="text-gray-500 text-sm mt-2">
+            <% if (typeof error !== 'undefined' && error && error.stack && process.env.NODE_ENV === 'development') { %>
+                <pre class="mt-2 text-xs text-left bg-gray-50 p-2 rounded"><%= error.stack %></pre>
+            <% } %>
+        </p>
+        <div class="mt-8">
+            <a href="/" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300">
+                Kembali ke Beranda
+            </a>
+            <% if (typeof user !== 'undefined' && user) { %>
+                <a href="/profile" class="ml-4 px-6 py-3 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-700 transition duration-300">
+                    Profil Saya
+                </a>
+            <% } else { %>
+                <a href="/login" class="ml-4 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition duration-300">
+                    Login
+                </a>
+            <% } %>
+        </div>
+    </div>
+
+    <% if (typeof user !== 'undefined' && user && typeof showSidebar !== 'undefined' && showSidebar === false ) { %>
+        <% } else if (typeof user !== 'undefined' && user) { %>
+        <%- include('../partials/sidebar', { user: user }) %>
+    <% } %>
+</body>
+</html>
