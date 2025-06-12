@@ -209,12 +209,13 @@ router.delete("/:employeeId", async (req, res) => {
 	try {
 		const { employeeId } = req.params;
 		const baseURL = process.env.BASE_URL;
+		const token = req.cookies.token;
 
 		const response = await fetch(`${baseURL}/api/employees/${employeeId}`, {
 			method: "DELETE",
 			headers: {
 				"Content-Type": "application/json",
-				Authorization: req.headers.authorization || "",
+				Authorization: `Bearer ${token}`,
 			},
 		});
 
