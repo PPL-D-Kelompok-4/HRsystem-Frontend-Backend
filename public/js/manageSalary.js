@@ -1,3 +1,4 @@
+// public/js/manageSalary.js
 document.addEventListener("DOMContentLoaded", () => {
     const tbody = document.querySelector('[data-salary-rows]');
     const nameInput = document.querySelector('input[name="employeeName"]');
@@ -21,6 +22,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const deptFilter = document.querySelector('select[name="department"]');
     const statusFilter = document.querySelector('select[name="status"]');
     const searchInput = document.querySelector('input[name="search"]');
+
+    // --- Variabel untuk Pagination ---
+    let allSalariesData = []; // Simpan semua data dari server
+    let currentPage = 1;
+    const rowsPerPage = 10;
+    const paginationSummary = document.getElementById('pagination-summary');
+    const prevButton = document.getElementById('prev-button');
+    const nextButton = document.getElementById('next-button');
+    // --- Akhir Variabel Pagination ---
 
     const STATUS_PAID_DB = "Lunas";
     const STATUS_PENDING_DB = "Belum Lunas";
@@ -73,57 +83,66 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function renderSalaries(data) {
         tbody.innerHTML = '';
-        data.forEach(payroll => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${payroll.employee_name}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${payroll.nama_Jabatan || 'N/A'}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatRupiah(payroll.gaji_Pokok)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatRupiah(payroll.bonus)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatRupiah(payroll.tunjangan)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatRupiah(payroll.potongan)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatRupiah(payroll.total_Gaji)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${getStatusBadge(payroll.status_Pembayaran)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-right">
-                    <button class="text-gray-600 hover:text-gray-900 edit-salary p-1" data-id="${payroll.payrollID}" title="Edit">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
-                            <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
+        
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const paginatedData = data.slice(start, end);
+
+        if (paginatedData.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="9" class="text-center py-4">No data found</td></tr>`;
+        } else {
+            paginatedData.forEach(payroll => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${payroll.employee_name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${payroll.nama_Jabatan || 'N/A'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatRupiah(payroll.gaji_Pokok)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatRupiah(payroll.bonus)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatRupiah(payroll.tunjangan)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatRupiah(payroll.potongan)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatRupiah(payroll.total_Gaji)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${getStatusBadge(payroll.status_Pembayaran)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-right">
+                        <button class="text-gray-600 hover:text-gray-900 edit-salary p-1" data-id="${payroll.payrollID}" title="Edit">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+                                <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        paginationSummary.textContent = `Showing ${data.length > 0 ? start + 1 : 0} to ${Math.min(end, data.length)} of ${data.length} records`;
+        prevButton.disabled = currentPage === 1;
+        nextButton.disabled = end >= data.length;
     }
 
     async function loadSalaries() {
         const params = new URLSearchParams();
         const periode = periodeFilter?.value;
         const department = deptFilter?.value;
-        const statusQuery = statusFilter?.value; // Renamed for clarity from 'status'
+        const statusQuery = statusFilter?.value;
         const search = searchInput?.value;
 
         if (periode && periode !== "Select Period") params.append("periode", periode);
         if (department && department !== "Select Department") params.append("department", department);
-
-        // Make sure to map display status to DB status if they are different
-        // For now, assuming statusQuery directly matches DB values like "Lunas" or "Belum Lunas" if used
-        if (statusQuery && statusQuery !== "All Status") {
-            params.append("status", statusQuery); // 'status' is the query param the backend expects
-        }
-
+        if (statusQuery && statusQuery !== "All Status") params.append("status", statusQuery);
         if (search) params.append("search", search);
 
         try {
-            const res = await fetch('/api/payrolls?' + params.toString()); // Fetches from the backend
+            const res = await fetch('/api/payrolls?' + params.toString());
             const data = await res.json();
-            renderSalaries(data); // Calls function to update the table
+            allSalariesData = data; // Simpan data asli
+            currentPage = 1; // Reset ke halaman 1 setiap kali filter berubah
+            renderSalaries(allSalariesData); // Render halaman pertama
         } catch (err) {
             console.error('Failed to load salaries:', err);
         }
     }
-
+    
     tbody.addEventListener("click", async (e) => {
         const editButton = e.target.closest("button.edit-salary");
         if (editButton) {
@@ -236,6 +255,23 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
+
+    // --- Event Listener untuk Pagination ---
+    prevButton?.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderSalaries(allSalariesData);
+        }
+    });
+
+    nextButton?.addEventListener('click', () => {
+        const totalPages = Math.ceil(allSalariesData.length / rowsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderSalaries(allSalariesData);
+        }
+    });
+    // ---
 
     periodeFilter?.addEventListener("change", loadSalaries);
     deptFilter?.addEventListener("change", loadSalaries);
