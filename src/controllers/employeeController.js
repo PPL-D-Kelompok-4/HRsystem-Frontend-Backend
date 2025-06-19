@@ -76,7 +76,6 @@ export const createEmployee = async (req, res) => {
 
         await connection.beginTransaction();
 
-        // Cek apakah email sudah ada
         const [existingUser] = await connection.query(
             "SELECT * FROM Karyawan WHERE email = ?",
             [email]
@@ -99,7 +98,6 @@ export const createEmployee = async (req, res) => {
 
         const employeeID = result.insertId;
 
-        // Ambil gaji dan tunjangan berdasarkan PositionID
         const [posDetails] = await connection.query(
             `SELECT gaji_Pokok, Tunjangan FROM Jabatan WHERE PositionID = ?`,
             [positionID]
@@ -246,11 +244,9 @@ export const deleteEmployee = async (req, res) => {
 	const connection = await pool.getConnection();
 	try {
 		const { id } = req.params;
-		console.log("🗑️ [deleteEmployee] Memproses ID:", id);
 
 		await connection.beginTransaction();
 
-		// 1. Cek apakah employee ada
 		const [employee] = await connection.query(
 			"SELECT * FROM Karyawan WHERE employeeID = ?",
 			[id]
@@ -262,16 +258,13 @@ export const deleteEmployee = async (req, res) => {
 			return res.status(404).json({ message: "Employee not found" });
 		}
 
-		// 2. Hapus entri gaji
 		await connection.query("DELETE FROM Gaji WHERE employeeID = ?", [id]);
 
-		// 3. Hapus dari tabel Karyawan
 		await connection.query("DELETE FROM Karyawan WHERE employeeID = ?", [id]);
 
 		await connection.commit();
 		connection.release();
 
-		console.log("✅ Employee dan entri gaji berhasil dihapus");
 		res.json({ message: "Employee and salary records deleted successfully" });
 	} catch (error) {
 		if (connection) {
