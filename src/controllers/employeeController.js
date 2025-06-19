@@ -54,64 +54,93 @@ export const getEmployeeById = async (req, res) => {
 
 // Create new employee
 export const createEmployee = async (req, res) => {
-	try {
-		const {
-			nama,
-			email,
-			no_Telp,
-			password,
-			positionID,
-			departmentID,
-			status_Karyawan,
-			tanggal_Bergabung,
-		} = req.body;
+    const connection = await pool.getConnection();
+    try {
+        const {
+            nama,
+            email,
+            no_Telp,
+            password,
+            positionID,
+            departmentID,
+            status_Karyawan,
+            tanggal_Bergabung,
+        } = req.body;
 
-		// Validate required fields
-		if (!nama || !email || !password || !positionID || !departmentID) {
-			return res.status(400).json({
-				message: "Name, email, password, position and department are required",
-			});
-		}
+        if (!nama || !email || !password || !positionID || !departmentID) {
+            connection.release();
+            return res.status(400).json({
+                message: "Name, email, password, position and department are required",
+            });
+        }
 
-		// Check if email already exists
-		const [existingUser] = await pool.query(
-			"SELECT * FROM Karyawan WHERE email = ?",
-			[email]
-		);
-		if (existingUser.length > 0) {
-			return res.status(400).json({ message: "Email already in use" });
-		}
+        await connection.beginTransaction();
 
-		// Set default values
-		const status = status_Karyawan || "Aktif";
-		const joinDate =
-			tanggal_Bergabung || new Date().toISOString().split("T")[0];
+        // Cek apakah email sudah ada
+        const [existingUser] = await connection.query(
+            "SELECT * FROM Karyawan WHERE email = ?",
+            [email]
+        );
+        if (existingUser.length > 0) {
+            await connection.rollback();
+            connection.release();
+            return res.status(400).json({ message: "Email already in use" });
+        }
 
-		const [result] = await pool.query(
-			`INSERT INTO Karyawan (
-        nama, email, no_Telp, password, positionID, departmentID, status_Karyawan, tanggal_Bergabung
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-			[
-				nama,
-				email,
-				no_Telp,
-				password,
-				positionID,
-				departmentID,
-				status,
-				joinDate,
-			]
-		);
+        const status = status_Karyawan || "Aktif";
+        const joinDate = tanggal_Bergabung || new Date().toISOString().split("T")[0];
 
-		res.status(201).json({
-			message: "Employee created successfully",
-			employeeID: result.insertId,
-		});
-	} catch (error) {
-		console.error("Error creating employee:", error);
-		res.status(500).json({ message: "Server error" });
-	}
+        const [result] = await connection.query(
+            `INSERT INTO Karyawan (
+                nama, email, no_Telp, password, positionID, departmentID, status_Karyawan, tanggal_Bergabung
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [nama, email, no_Telp, password, positionID, departmentID, status, joinDate]
+        );
+
+        const employeeID = result.insertId;
+
+        // Ambil gaji dan tunjangan berdasarkan PositionID
+        const [posDetails] = await connection.query(
+            `SELECT gaji_Pokok, Tunjangan FROM Jabatan WHERE PositionID = ?`,
+            [positionID]
+        );
+
+        if (posDetails.length === 0) {
+            await connection.rollback();
+            connection.release();
+            return res.status(400).json({ message: "Invalid position ID: no salary info found" });
+        }
+
+        const { gaji_Pokok, Tunjangan } = posDetails[0];
+        const bonus = 0;
+        const potongan = 0;
+        const total_Gaji = parseFloat(gaji_Pokok) + parseFloat(Tunjangan);
+        const periode = new Date().toISOString().split("T")[0];
+
+        await connection.query(
+            `INSERT INTO Gaji (
+                employeeID, periode, gaji_Pokok, tunjangan, bonus, potongan, total_Gaji, status_Pembayaran
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [employeeID, periode, gaji_Pokok, Tunjangan, bonus, potongan, total_Gaji, "Belum Lunas"]
+        );
+
+        await connection.commit();
+        connection.release();
+
+        res.status(201).json({
+            message: "Employee and salary record created successfully",
+            employeeID,
+        });
+    } catch (error) {
+        if (connection) {
+            await connection.rollback();
+            connection.release();
+        }
+        console.error("Error creating employee:", error);
+        res.status(500).json({ message: "Server error during employee creation" });
+    }
 };
+
 
 // Update employee status only
 export const updateEmployeeStatus = async (req, res) => {
@@ -214,58 +243,44 @@ export const updateEmployee = async (req, res) => {
 
 // Delete employee
 export const deleteEmployee = async (req, res) => {
+	const connection = await pool.getConnection();
 	try {
 		const { id } = req.params;
+		console.log("🗑️ [deleteEmployee] Memproses ID:", id);
 
-		const [employee] = await pool.query(
+		await connection.beginTransaction();
+
+		// 1. Cek apakah employee ada
+		const [employee] = await connection.query(
 			"SELECT * FROM Karyawan WHERE employeeID = ?",
 			[id]
 		);
+
 		if (employee.length === 0) {
+			await connection.rollback();
+			connection.release();
 			return res.status(404).json({ message: "Employee not found" });
 		}
 
-		const [attendances] = await pool.query(
-			"SELECT COUNT(*) as count FROM Kehadiran WHERE employeeID = ?",
-			[id]
-		);
+		// 2. Hapus entri gaji
+		await connection.query("DELETE FROM Gaji WHERE employeeID = ?", [id]);
 
-		// Handle 'Cuti' table missing
-		let leavesCount = 0;
-		try {
-			const [leaves] = await pool.query(
-				"SELECT COUNT(*) as count FROM Cuti WHERE employeeID = ?",
-				[id]
-			);
-			leavesCount = leaves[0].count;
-		} catch (error) {
-			console.warn("Warning: Failed to check leaves:", error.message);
-		}
+		// 3. Hapus dari tabel Karyawan
+		await connection.query("DELETE FROM Karyawan WHERE employeeID = ?", [id]);
 
-		const [payrolls] = await pool.query(
-			"SELECT COUNT(*) as count FROM Gaji WHERE employeeID = ?",
-			[id]
-		);
+		await connection.commit();
+		connection.release();
 
-		if (attendances[0].count > 0 || leavesCount > 0 || payrolls[0].count > 0) {
-			await pool.query(
-				"UPDATE Karyawan SET status_Karyawan = ? WHERE employeeID = ?",
-				["Non-Aktif", id]
-			);
-			return res.json({
-				message:
-					"Employee has related records. Status changed to Non-Aktif instead of deletion.",
-			});
-		}
-
-		const [result] = await pool.query(
-			"DELETE FROM Karyawan WHERE employeeID = ?",
-			[id]
-		);
-
-		res.json({ message: "Employee deleted successfully" });
+		console.log("✅ Employee dan entri gaji berhasil dihapus");
+		res.json({ message: "Employee and salary records deleted successfully" });
 	} catch (error) {
-		console.error("Error deleting employee:", error);
-		res.status(500).json({ message: "Server error" });
+		if (connection) {
+			await connection.rollback();
+			connection.release();
+		}
+		console.error("🔥 Error deleting employee:", error);
+		res.status(500).json({ message: "Server error during deletion" });
 	}
 };
+
+
