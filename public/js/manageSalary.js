@@ -93,9 +93,18 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             paginatedData.forEach(payroll => {
                 const row = document.createElement('tr');
+
+                let formattedPeriode = "-";
+                if (payroll.periode) {
+                    const periodeDate = new Date(payroll.periode);
+                    const options = { year: 'numeric', month: 'short' };
+                    formattedPeriode = periodeDate.toLocaleDateString('en-US', options);
+                }
+
                 row.innerHTML = `
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${payroll.employee_name}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${payroll.nama_Jabatan || 'N/A'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formattedPeriode}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatRupiah(payroll.gaji_Pokok)}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatRupiah(payroll.bonus)}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatRupiah(payroll.tunjangan)}</td>
