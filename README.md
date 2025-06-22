@@ -1,146 +1,104 @@
-# HR and Attendance System Backend
 
-A backend system for HR and Attendance management built with Express.js and MySQL.
+# HR & Attendance System  
+A backend and frontend system for managing human resources and employee attendance.
 
-## Features
+## 📌 Key Features (Backend)  
+- Employee management  
+- Department management  
+- Position management  
+- Attendance tracking  
+- User authentication and authorization (login, profile data, password change)
 
-- Employee management
-- Department management
-- Position management
-- Attendance tracking
-- Authentication and authorization
+## ⚙️ Technologies  
+- **Backend**: Node.js (Express.js) + MySQL  
+- **Frontend**: EJS + Tailwind CSS
 
-## Prerequisites
+## 🛠️ Prerequisites  
+- Node.js v14+  
+- MySQL v5.7+  
 
-- Node.js (v14 or higher)
-- MySQL (v5.7 or higher)
+## 🚀 Installation & Running (Backend)  
 
-## Installation
-
-1. Clone the repository:
-
+1. Clone the repository:  
+   ```bash
+   git clone https://github.com/PPL-D-Kelompok-4/HRsystem-Frontend-Backend.git  
+   cd HRsystem-Frontend-Backend
    ```
-   git clone <repository-url>
-   cd hr-attendance-system
-   ```
-
-2. Install dependencies:
-
-   ```
+2. Install dependencies:  
+   ```bash
    npm install
    ```
-
-3. Create a `.env` file in the root directory (use `.env.example` as a template):
-
-   ```
+3. Copy and edit environment config:  
+   ```bash
    cp .env.example .env
    ```
-
-4. Update the `.env` file with your configuration.
-
-5. Create the database and tables:
-
-   - Run the SQL script in `database/migrations/init.sql` in your MySQL server.
-
-6. Start the server:
-
-   ```
+4. Create the database and tables:  
+   - Run the SQL script in `database/migrations/init.sql` on your MySQL server
+5. Run the server:  
+   ```bash
    npm start
    ```
-
-   For development with auto-reload:
-
-   ```
+   or for development mode (auto-reload):  
+   ```bash
    npm run dev
    ```
 
-## API Endpoints
+## 🔌 API Endpoints (Backend)
 
-### Authentication
+### Authentication  
+- `POST /api/auth/login` – Login  
+- `GET /api/auth/me` – Get current user data  
+- `POST /api/auth/change-password` – Change password  
 
-- POST /api/auth/login - Login
-- GET /api/auth/me - Get current user
-- POST /api/auth/change-password - Change password
+### Department  
+- CRUD endpoints: `GET`, `POST`, `PUT`, `DELETE /api/departments`
 
-### Departments
+### Position  
+- CRUD endpoints: `GET`, `POST`, `PUT`, `DELETE /api/positions`
 
-- GET /api/departments - Get all departments
-- GET /api/departments/:id - Get department by ID
-- POST /api/departments - Create new department
-- PUT /api/departments/:id - Update department
-- DELETE /api/departments/:id - Delete department
+### Employee  
+- CRUD endpoints: `GET`, `POST`, `PUT`, `DELETE /api/employees`
 
-### Employees
+### Attendance  
+- `GET /api/attendances` – All records  
+- `GET /api/attendances/:id` – Detail  
+- `GET /api/attendances/employee/:employeeId` – By employee  
+- `GET /api/attendances/date-range` – Filter by date range  
+- `POST /api/attendances/clock-in`, `clock-out` – Auto attendance  
+- `POST /api/attendances` – Manual entry  
+- `DELETE /api/attendances/:id` – Delete record  
 
-- GET /api/employees - Get all employees
-- GET /api/employees/:id - Get employee by ID
-- POST /api/employees - Create new employee
-- PUT /api/employees/:id - Update employee
-- DELETE /api/employees/:id - Delete employee
-
-### Positions
-
-- GET /api/positions - Get all positions
-- GET /api/positions/:id - Get position by ID
-- POST /api/positions - Create new position
-- PUT /api/positions/:id - Update position
-- DELETE /api/positions/:id - Delete position
-
-### Attendances
-
-- GET /api/attendances - Get all attendances
-- GET /api/attendances/:id - Get attendance by ID
-- GET /api/attendances/employee/:employeeId - Get attendances by employee ID
-- GET /api/attendances/date-range - Get attendances by date range
-- POST /api/attendances/clock-in - Clock in
-- POST /api/attendances/clock-out - Clock out
-- POST /api/attendances - Create or update attendance manually
-- DELETE /api/attendances/:id - Delete attendance
-
-## Project Structure
-
+## 🎯 Project Structure (Backend)  
 ```
-hr-attendance-system/
+/
 ├── database/
-│   └── migrations/
-│       └── init.sql
+│   └── migrations/init.sql
 ├── logs/
 ├── src/
 │   ├── config/
-│   │   ├── config.js
-│   │   └── database.js
 │   ├── controllers/
-│   │   ├── attendanceController.js
-│   │   ├── authController.js
-│   │   ├── departmentController.js
-│   │   ├── employeeController.js
-│   │   └── positionController.js
 │   ├── middlewares/
-│   │   ├── authMiddleware.js
-│   │   └── validationMiddleware.js
 │   ├── models/
-│   │   ├── attendanceModel.js
-│   │   ├── departmentModel.js
-│   │   ├── employeeModel.js
-│   │   └── positionModel.js
 │   ├── routes/
-│   │   ├── attendanceRoutes.js
-│   │   ├── authRoutes.js
-│   │   ├── departmentRoutes.js
-│   │   ├── employeeRoutes.js
-│   │   └── positionRoutes.js
-│   ├── utils/
-│   │   ├── helpers.js
-│   │   └── logger.js
-│   └── app.js
-├── .env
+│   └── utils/
+├── public/   (JS assets)
+├── views/    (EJS templates)
 ├── .env.example
-├── .gitignore
-├── package.json
-├── README.md
-└── server.js
+├── server.js
+└── package.json
 ```
 
-## License
+## 📝 Frontend  
+- Built using EJS + Tailwind CSS  
+- Provides pages for:  
+  - Login / Authentication  
+  - Dashboard
+  - Attendance  
+  - Manage Salary 
+  - Manage Leave
+  - Reports
+  - Employee
+  - Profile  
 
-This project is licensed under the ISC License.
+## ⚠️ License  
+- ISC License (as stated in `package.json`)
