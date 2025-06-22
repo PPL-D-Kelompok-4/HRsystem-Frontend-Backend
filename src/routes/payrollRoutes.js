@@ -10,6 +10,7 @@ import {
 // Impor middleware baru dan yang sudah ada
 import { authenticate, isAdmin, canViewAllPayrolls, isFinanceOnly } from '../middlewares/authMiddleware.js'; // Tambahkan isFinanceOnly
 import { payrollValidationRules, validate } from '../middlewares/validationMiddleware.js';
+import { autoGenerateMonthlyPayrolls } from '../controllers/payrollController.js';
 
 const router = express.Router();
 
@@ -49,5 +50,8 @@ router.delete(
   isAdmin, // Hanya HR yang bisa menghapus
   deletePayroll
 );
+
+// Endpoint untuk cron-job trigger gaji otomatis
+router.post('/generate-auto', autoGenerateMonthlyPayrolls);
 
 export default router;
