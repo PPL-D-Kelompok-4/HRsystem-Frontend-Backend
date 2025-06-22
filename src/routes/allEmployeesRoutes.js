@@ -37,7 +37,7 @@ router.get("/", authenticate, async (req, res) => {
 		res.render("allEmployees", {
 			employees,
 			departmentID: req.user.departmentID,
-			title: "HR System",
+			title: "All Employees | HR System",
 		});
 	} catch (error) {
 		console.error("Failed to fetch employees:", error.message);

@@ -17,7 +17,7 @@ router.get("/", (req, res) => {
 	res.render("addEmployee", {
 		mode: "add",
 		employee: null,
-		title: "HR System",
+		title: "Add New Employee | HR System",
 	});
 });
 
