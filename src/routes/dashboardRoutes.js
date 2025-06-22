@@ -33,6 +33,7 @@ router.get("/", async (req, res) => {
             const pendingLeaves = pendingLeavesResult;
 
             res.render("index", {
+                title: "Dashboard | HR System",
                 totalEmployees,
                 pendingLeaves
             });
@@ -59,6 +60,7 @@ router.get("/", async (req, res) => {
             `, [user.id]);            
 
             res.render("dashboardEmployee", {
+                title: "Dashboard | HR System",
                 user,
                 totalEmployees,
                 recentHires: recentHiresResult,

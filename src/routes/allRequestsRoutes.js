@@ -51,7 +51,7 @@ router.get("/", authenticate, async (req, res) => {
 		res.render("allRequests", {
 			leaveRequests,
 			user: req.user,
-			title: "HR System",
+			title: "Leave Requests | HR System",
 		});
 	} catch (error) {
 		console.error("Failed to fetch leaves:", error.message);
