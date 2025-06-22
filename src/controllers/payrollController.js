@@ -2,6 +2,8 @@
 import pool from '../config/database.js';
 import { format } from 'date-fns';
 import PDFDocument from 'pdfkit';
+import { payrollAutoGenerator } from '../services/payrollGenerator.js';
+
 
 // Get all payrolls (for Manage Salary page)
 export const getAllPayrolls = async (req, res) => {
@@ -336,5 +338,27 @@ export const deletePayroll = async (req, res) => {
   } catch (error) {
     console.error('Error deleting payroll:', error);
     res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Endpoint untuk generate gaji otomatis (dipanggil oleh cron-job)
+export const autoGenerateMonthlyPayrolls = async (req, res) => {
+  try {
+    // API Key check (opsional tapi direkomendasikan)
+    const key = req.headers['x-api-key'];
+    if (key !== process.env.PAYROLL_KEY) {
+      return res.status(403).json({ message: "Forbidden: Invalid API Key" });
+    }
+
+    const result = await payrollAutoGenerator(); // Panggil logika dari services
+    res.json({
+      message: `Payroll auto-generation completed.`,
+      recordsCreated: result.created,
+      period: result.periode,
+      autoTriggered: result.isAuto
+    });
+  } catch (err) {
+    console.error("Error generating payrolls:", err);
+    res.status(500).json({ message: "Internal server error during payroll generation." });
   }
 };
