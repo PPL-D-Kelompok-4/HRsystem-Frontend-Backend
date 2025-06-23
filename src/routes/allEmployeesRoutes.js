@@ -117,6 +117,7 @@ router.get("/edit/:employeeId", async (req, res) => {
 		res.render("addEmployee", {
 			mode: "edit",
 			employee,
+			title: "Edit Employee | HR System",
 		});
 	} catch (error) {
 		console.error(error);
