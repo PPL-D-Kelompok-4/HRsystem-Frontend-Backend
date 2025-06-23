@@ -1,4 +1,12 @@
 import pool from "../config/database.js";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc.js";
+import timezone from "dayjs/plugin/timezone.js";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+const TIMEZONE = "Asia/Jakarta";
 
 // Get all attendances
 export const getAllAttendances = async (req, res) => {
@@ -95,14 +103,12 @@ export const getAttendancesByDateRange = async (req, res) => {
 // Record clock in
 export const clockIn = async (req, res) => {
 	try {
-		const { employeeID } = req.body;
+		const { employeeID, checkInTime } = req.body;
 
-		// Validate required fields
 		if (!employeeID) {
 			return res.status(400).json({ message: "Employee ID is required" });
 		}
 
-		// Check if employee exists
 		const [employee] = await pool.query(
 			"SELECT * FROM Karyawan WHERE employeeID = ?",
 			[employeeID]
@@ -111,12 +117,10 @@ export const clockIn = async (req, res) => {
 			return res.status(404).json({ message: "Employee not found" });
 		}
 
-		// Get current date and time
-		const now = new Date();
-		const currentDate = now.toISOString().split("T")[0];
-		const currentTime = now.toTimeString().split(" ")[0];
+		const now = dayjs().tz(TIMEZONE);
+		const currentDate = now.format("YYYY-MM-DD");
+		const currentTime = checkInTime || now.format("HH:mm:ss");
 
-		// Check if employee has already clocked in today
 		const [existingAttendance] = await pool.query(
 			"SELECT * FROM Kehadiran WHERE employeeID = ? AND tanggal = ?",
 			[employeeID, currentDate]
@@ -128,7 +132,6 @@ export const clockIn = async (req, res) => {
 			});
 		}
 
-		// Record attendance
 		const [result] = await pool.query(
 			"INSERT INTO Kehadiran (employeeID, tanggal, jam_Masuk, status) VALUES (?, ?, ?, ?)",
 			[employeeID, currentDate, currentTime, "Hadir"]
@@ -149,17 +152,14 @@ export const clockOut = async (req, res) => {
 	try {
 		const { employeeID } = req.body;
 
-		// Validate required fields
 		if (!employeeID) {
 			return res.status(400).json({ message: "Employee ID is required" });
 		}
 
-		// Get current date and time
-		const now = new Date();
-		const currentDate = now.toISOString().split("T")[0];
-		const currentTime = now.toTimeString().split(" ")[0];
+		const now = dayjs().tz(TIMEZONE);
+		const currentDate = now.format("YYYY-MM-DD");
+		const currentTime = now.format("HH:mm:ss");
 
-		// Check if employee has clocked in today
 		const [attendance] = await pool.query(
 			"SELECT * FROM Kehadiran WHERE employeeID = ? AND tanggal = ?",
 			[employeeID, currentDate]
@@ -171,15 +171,13 @@ export const clockOut = async (req, res) => {
 			});
 		}
 
-		// Check if employee has already clocked out
 		if (attendance[0].jam_Keluar) {
 			return res.status(400).json({
 				message: "Employee has already clocked out today",
 			});
 		}
 
-		// Update attendance with clock out time
-		const [result] = await pool.query(
+		await pool.query(
 			"UPDATE Kehadiran SET jam_Keluar = ? WHERE attendanceID = ?",
 			[currentTime, attendance[0].attendanceID]
 		);
@@ -266,7 +264,7 @@ export const getTodayAttendanceByEmployeeId = async (req, res) => {
 		const { employeeId } = req.params;
 
 		// Get today's date in YYYY-MM-DD
-		const today = new Date().toISOString().split("T")[0];
+		const today = dayjs().tz(TIMEZONE).format("YYYY-MM-DD");
 
 		// Query Kehadiran untuk hari ini
 		const [rows] = await pool.query(
